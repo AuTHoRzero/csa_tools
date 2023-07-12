@@ -1,0 +1,18 @@
+QPushButton{
+    background-color: rgb(245, 232, 50);
+    color: rgb(0, 0, 0);
+}
+
+QDoubleSpinBox{
+    background-color: rgb(245, 232, 50);
+    color: rgb(0, 0, 0);
+}
+
+QComboBox{
+    background-color: rgb(245, 232, 50);
+    color:rgb(0, 0, 0)
+}
+
+QLabel {
+    color: white;
+}
