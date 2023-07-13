@@ -84,8 +84,11 @@ def config_get_value(path, setting):
 
 class Ui_Password(object):
     def setupUi(self, Password):
+        Password.setStyleSheet("QDialog{background-image: url(background.png);\nbackground-position: absolute;}")
         Password.setObjectName("Password")
         Password.resize(558, 138)
+        Password.setWindowFlag(QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint
+                                 | QtCore.Qt.WindowType.CustomizeWindowHint)
         self.ok_box = QtWidgets.QDialogButtonBox(parent=Password)
         self.ok_box.setGeometry(QtCore.QRect(460, 100, 81, 25))
         self.ok_box.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
@@ -120,7 +123,7 @@ class Ui_Password(object):
 
     def retranslateUi(self, Password):
         _translate = QtCore.QCoreApplication.translate
-        Password.setWindowTitle(_translate("Password", "Dialog"))
+        Password.setWindowTitle(_translate("Password", "Введите пароль"))
         self.enter_manager_passowrd_label.setText(_translate("Password", "Введите пароль менеджера:"))
         self.password_field.setText(_translate("Password", "Неверный пароль"))
 
@@ -138,11 +141,14 @@ class Ui_Password(object):
                 Password_window.close()
             else:
                 self.password_field.setVisible(True)
+                QTimer.singleShot(4000, self.hide_label)
         except:
             MainWindow.setEnabled(True)
             MainWindow.close()
             Password_window.close()
             settings_window.show()
+    def hide_label(self):
+        self.password_field.setVisible(False)
 
     def discard(self):
         MainWindow.setEnabled(True)
@@ -154,6 +160,7 @@ class Ui_Settings_second(object):
     def setupUi(self, Settings_second):
         Settings_second.setObjectName("Settings_second")
         Settings_second.resize(742, 880)
+        Settings_second.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
         self.centralwidget = QtWidgets.QWidget(parent=Settings_second)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget.setStyleSheet(style)
@@ -1204,6 +1211,7 @@ class Ui_MainWindow(object):                #Основное окно (меню
     def settings(self):
         Password_window.show()
         MainWindow.setDisabled(True)
+#        MainWindow.close()
 #        settings_window.show()
 
 
