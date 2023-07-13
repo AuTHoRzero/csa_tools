@@ -7,6 +7,9 @@
 import telebot
 import datetime
 import sqlite3
+import configparser
+import os
+import hashlib
 
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtCore, QtWidgets
@@ -16,7 +19,7 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 
 
 
-bot = telebot.TeleBot('5834237694:AAE0TJdYohtj69L6jsXmD2MB0vFcsWB8tpA')
+
 ############
 ##Database##
 ############
@@ -30,6 +33,44 @@ cur.execute('CREATE TABLE IF NOT EXISTS config (parameter TEXT, value TEXT)')
 
 with open('style.css', 'r') as r:
     style = r.read()
+
+##########
+##Config##
+##########
+def create_config(path):
+    config = configparser.ConfigParser()
+    config.add_section("Settings")
+    with open (path, 'w') as config_file:
+        config.write(config_file)
+
+def add_api(path, api):
+    if not os.path.exists(path):
+        create_config(path)
+    
+    config = configparser.ConfigParser()
+    config.read(path)
+    config.set('Settings', 'API', api)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+def add_password(path, password):
+    if not os.path.exists(path):
+        create_config(path)
+    config = configparser.ConfigParser()
+    config.read(path)
+    passwrd = hashlib.md5(password)
+    passwrd = passwrd.hexdigest()
+    config.set('Settings', 'MANAGER_PASSOWRD', passwrd)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+    
+def config_get_value(path, setting):
+    if not os.path.exists(path):
+        create_config(path)
+    config = configparser.ConfigParser()
+    config.read(path)
+    value = config.get('Settings', setting)
+    return value
 
 
 class Ui_settings(object):
@@ -332,8 +373,7 @@ class Ui_settings(object):
 
     def set_api(self):
         key = self.api_field.toPlainText()
-        cur.execute(f'INSERT OR REPLACE INTO config VALUES ("API", "{key}")')
-        conn.commit()
+        add_api(path, key)
 
     def to_menu(self):
         settings_window.hide()
@@ -634,6 +674,7 @@ class Inventory(object):
         MainWindow.show()
 
     def send_tg(self):          #Отправка в телегу
+        bot = telebot.TeleBot(config_get_value(path, 'api'))
         self.pushButton_2.setDisabled(True)
         self.send_label.setVisible(True)
         self.pushButton_2.setStyleSheet('background: gray;\ncolor: white;')
@@ -738,6 +779,7 @@ Stylesheet = "TitleBar {background-color: rgb(54, 157, 180);}"
 
 if __name__ == "__main__":
     import sys
+    path = 'settings.ini'
     app = QtWidgets.QApplication(sys.argv)
     app.setStyleSheet(Stylesheet)
     
