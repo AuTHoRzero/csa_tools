@@ -58,9 +58,18 @@ def add_password(path, password):
         create_config(path)
     config = configparser.ConfigParser()
     config.read(path)
-    passwrd = hashlib.md5(password)
+    passwrd = hashlib.md5(password.encode())
     passwrd = passwrd.hexdigest()
     config.set('Settings', 'MANAGER_PASSOWRD', passwrd)
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+def config_set_discount(path, discount):
+    if not os.path.exists(path):
+        create_config(path)
+    config = configparser.ConfigParser()
+    config.read(path)
+    config.set('Settings', 'DISCOUNT', discount)
     with open(path, "w") as config_file:
         config.write(config_file)
     
@@ -72,6 +81,259 @@ def config_get_value(path, setting):
     value = config.get('Settings', setting)
     return value
 
+
+class Ui_Settings_second(object):
+    def setupUi(self, Settings_second):
+        Settings_second.setObjectName("Settings_second")
+        Settings_second.resize(742, 880)
+        self.centralwidget = QtWidgets.QWidget(parent=Settings_second)
+        self.centralwidget.setObjectName("centralwidget")
+
+        ################
+        ##Новый пароль##
+        ################
+        self.short_password_label = QtWidgets.QLabel(self.centralwidget)
+        self.short_password_label.setStyleSheet('color: red')
+        self.short_password_label.setVisible(True)
+        self.short_password_label.setGeometry(QtCore.QRect(170, 35, 340, 31))
+        self.short_password_label.setText('Пароль должен быть не менее 6 символов')
+        self.short_password_label.setVisible(False)
+
+        self.new_password_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.new_password_label.setGeometry(QtCore.QRect(10, 60, 111, 31))
+        self.new_password_label.setObjectName("new_password_label")
+
+        self.new_password_field = QtWidgets.QTextEdit(parent=self.centralwidget)
+        self.new_password_field.setGeometry(QtCore.QRect(150, 60, 361, 31))
+        self.new_password_field.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.new_password_field.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.new_password_field.setObjectName("new_password_field")
+
+        self.change_password_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.change_password_btn.setGeometry(QtCore.QRect(530, 60, 141, 31))
+        self.change_password_btn.setObjectName("change_password_btn")
+        self.change_password_btn.clicked.connect(self.change_password)
+
+        self.change_password_green_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.change_password_green_label.setGeometry(QtCore.QRect(530, 40, 101, 20))
+        self.change_password_green_label.setObjectName("change_password_green_label")
+        self.change_password_green_label.setStyleSheet('color: green')
+        self.change_password_green_label.setVisible(False)
+
+
+
+        self.Bar_admin_big_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.Bar_admin_big_label.setGeometry(QtCore.QRect(10, 110, 341, 51))
+        font = QtGui.QFont()
+        font.setPointSize(25)
+        self.Bar_admin_big_label.setFont(font)
+        self.Bar_admin_big_label.setObjectName("Bar_admin_big_label")
+        self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
+        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 170, 341, 31))
+        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+        self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.label_4 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget)
+        self.label_4.setObjectName("label_4")
+        self.horizontalLayout.addWidget(self.label_4)
+        self.spinBox = QtWidgets.QSpinBox(parent=self.horizontalLayoutWidget)
+        self.spinBox.setMaximum(100)
+        self.spinBox.setObjectName("spinBox")
+        try:
+            discount = config_get_value(path, "discount")
+            self.spinBox.setValue(int(discount))
+        except:
+            pass
+        self.horizontalLayout.addWidget(self.spinBox)
+        self.set_discount_btn = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget)
+        self.set_discount_btn.setObjectName("pushButton_2")
+        self.set_discount_btn.clicked.connect(self.set_discount)
+        self.horizontalLayout.addWidget(self.set_discount_btn)
+
+
+        self.Change_password_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.Change_password_label.setGeometry(QtCore.QRect(10, 20, 171, 31))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.Change_password_label.setFont(font)
+        self.Change_password_label.setObjectName("Change_password_label")
+        self.position_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.position_label.setGeometry(QtCore.QRect(10, 220, 131, 21))
+        self.position_label.setObjectName("position_label")
+
+        self.all_position_list = QtWidgets.QListWidget(parent=self.centralwidget)
+        self.all_position_list.setGeometry(QtCore.QRect(10, 250, 511, 201))
+        self.all_position_list.setObjectName("all_position_list")
+        cur.execute('SELECT * FROM admin_bar')
+        result = cur.fetchall()
+        for item in result:
+            self.all_position_list.addItem(f'{item[0]} | {item[1]} | {item[2]} - {int(item[3])}')
+        self.all_position_list.clicked.connect(self.selected_from_all_list)
+
+        self.search_admin_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.search_admin_label.setGeometry(QtCore.QRect(10, 470, 171, 31))
+        font = QtGui.QFont()
+        font.setPointSize(15)
+        self.search_admin_label.setFont(font)
+        self.search_admin_label.setObjectName("search_admin_label")
+        self.admin_name_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.admin_name_label.setGeometry(QtCore.QRect(15, 510, 101, 21))
+        self.admin_name_label.setObjectName("admin_name_label")
+        self.admin_name_combo_box = QtWidgets.QComboBox(parent=self.centralwidget)
+        self.admin_name_combo_box.setGeometry(QtCore.QRect(110, 510, 120, 25))
+        self.admin_name_combo_box.setObjectName("admin_name_combo_box")
+        cur.execute('SELECT * FROM admins')
+        admins = cur.fetchall()
+        for admin in admins:
+            self.admin_name_combo_box.addItem(admin[0])
+        self.confirm_admin_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.confirm_admin_btn.setStyleSheet(style)
+        self.confirm_admin_btn.setGeometry(QtCore.QRect(240, 510, 100, 25))
+        self.confirm_admin_btn.setText('Подтвердить')
+        self.confirm_admin_btn.clicked.connect(self.search_by_admin)
+
+
+        self.admin_positions_list = QtWidgets.QListWidget(parent=self.centralwidget)
+        self.admin_positions_list.setGeometry(QtCore.QRect(10, 540, 341, 251))
+        self.admin_positions_list.setObjectName("admin_positions_list")
+        self.summ_bar_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.summ_bar_label.setGeometry(QtCore.QRect(360, 550, 151, 17))
+        self.summ_bar_label.setObjectName("summ_bar_label")
+        self.label_bar_admin = QtWidgets.QLabel(parent=self.centralwidget)
+        self.label_bar_admin.setGeometry(QtCore.QRect(640, 550, 71, 16))
+        self.label_bar_admin.setObjectName("label_bar_admin")
+        self.summ_with_sale_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.summ_with_sale_label.setGeometry(QtCore.QRect(360, 580, 151, 17))
+        self.summ_with_sale_label.setObjectName("summ_with_sale_label")
+        self.label_bar_sale = QtWidgets.QLabel(parent=self.centralwidget)
+        self.label_bar_sale.setGeometry(QtCore.QRect(640, 580, 81, 17))
+        self.label_bar_sale.setObjectName("label_bar_sale")
+
+        self.delete_all_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.delete_all_btn.setGeometry(QtCore.QRect(530, 260, 191, 41))
+        self.delete_all_btn.setObjectName("delete_all_btn")
+        self.delete_all_btn.clicked.connect(self.delete_all)
+        self.delete_all_btn.setStyleSheet(style)
+
+        self.delete_tovar_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.delete_tovar_btn.setGeometry(QtCore.QRect(550, 630, 121, 31))
+        self.delete_tovar_btn.setObjectName("delete_tovar_btn")
+        self.tovar_name_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.tovar_name_label.setGeometry(QtCore.QRect(360, 630, 181, 31))
+        self.tovar_name_label.setObjectName("tovar_name_label")
+        self.delete_all_from_admin_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.delete_all_from_admin_btn.setGeometry(QtCore.QRect(370, 754, 311, 31))
+        self.delete_all_from_admin_btn.setObjectName("delete_all_from_admin_btn")
+        self.position_from_all_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.position_from_all_label.setGeometry(QtCore.QRect(530, 426, 121, 16))
+        self.position_from_all_label.setObjectName("position_from_all_label")
+
+        self.delete_from_all_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.delete_from_all_btn.setGeometry(QtCore.QRect(650, 420, 89, 25))
+        self.delete_from_all_btn.setObjectName("delete_from_all_btn")
+        self.delete_from_all_btn.clicked.connect(self.delete_one_from_all_list)
+
+        ################
+        ##Кнопка назад##
+        ################
+        self.back_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.back_btn.setGeometry(QtCore.QRect(10, 820, 101, 31))
+        self.back_btn.setObjectName("back_btn")
+        self.back_btn.clicked.connect(self.back)
+        Settings_second.setCentralWidget(self.centralwidget)
+
+        self.statusbar = QtWidgets.QStatusBar(parent=Settings_second)
+        self.statusbar.setObjectName("statusbar")
+        Settings_second.setStatusBar(self.statusbar)
+
+        self.retranslateUi(Settings_second)
+        QtCore.QMetaObject.connectSlotsByName(Settings_second)
+
+    def retranslateUi(self, Settings_second):
+        _translate = QtCore.QCoreApplication.translate
+        Settings_second.setWindowTitle(_translate("Settings_second", "Настройки"))
+        self.new_password_label.setText(_translate("Settings_second", "Новый пароль:"))
+        self.change_password_btn.setText(_translate("Settings_second", "Изменить"))
+        self.change_password_green_label.setText(_translate("Settings_second", "Успешно"))
+        self.Bar_admin_big_label.setText(_translate("Settings_second", "Бар администратор:"))
+        self.label_4.setText(_translate("Settings_second", "Размер скидки ( в %):"))
+        self.set_discount_btn.setText(_translate("Settings_second", "Применить"))
+        self.Change_password_label.setText(_translate("Settings_second", "Сменить пароль:"))
+        self.position_label.setText(_translate("Settings_second", "Взятые позиции:"))
+        self.search_admin_label.setText(_translate("Settings_second", "Поиск по админу:"))
+        self.admin_name_label.setText(_translate("Settings_second", "Имя админа:"))
+        self.summ_bar_label.setText(_translate("Settings_second", "Сумма взятого бара:"))
+        self.label_bar_admin.setText(_translate("Settings_second", "0 ₽"))
+        self.summ_with_sale_label.setText(_translate("Settings_second", "Сумма со скидкой:"))
+        self.label_bar_sale.setText(_translate("Settings_second", "0 ₽"))
+        self.delete_all_btn.setText(_translate("Settings_second", "Стереть все записи"))
+        self.delete_tovar_btn.setText(_translate("Settings_second", "Стереть запись"))
+        self.tovar_name_label.setText(_translate("Settings_second", "Товар"))
+        self.delete_all_from_admin_btn.setText(_translate("Settings_second", "Стереть все записи по админу"))
+        self.position_from_all_label.setText(_translate("Settings_second", "Запись"))
+        self.delete_from_all_btn.setText(_translate("Settings_second", "Стереть"))
+        self.back_btn.setText(_translate("Settings_second", "Назад"))
+
+
+    def change_password(self):
+        new_pass = self.new_password_field.toPlainText()
+        if new_pass.__len__() < 6:
+            self.short_password_label.setVisible(True)
+            QTimer.singleShot(5000, self.hide_short_passord_label)
+        else:
+            self.new_password_field.clear()
+            add_password(path, new_pass)
+
+    def hide_short_passord_label(self):
+        self.short_password_label.setVisible(False)
+
+    def set_discount(self):
+        value = self.spinBox.value()
+        config_set_discount(path, str(value))
+
+    def search_by_admin(self):
+        admin_name = self.admin_name_combo_box.currentText()
+        cur.execute(f'SELECT * FROM admin_bar WHERE admin = "{admin_name}"')
+        results = cur.fetchall()
+        summ = 0
+        for result in results:
+            summ = summ + (result[4] * result[3])
+            self.admin_positions_list.addItem(f'{result[0]}  {result[1]}  {int(result[3])} - {result[2]}')
+        self.label_bar_admin.setText(f'{str(summ)} ₽')
+        discount = int(config_get_value(path, 'discount'))
+        discount = summ / 100 * (100-discount)
+        self.label_bar_sale.setText(f'{discount} ₽')
+
+    def selected_from_all_list(self):
+        item = self.all_position_list.currentItem()
+        print(item.text())
+
+    def delete_all(self):
+        i = 0
+        count = self.all_position_list.count()
+        while i < count:
+            self.all_position_list.takeItem(0)
+            i = i + 1 
+        cur.execute('DELETE FROM admin_bar')
+        conn.commit()
+
+    def delete_one_from_all_list(self):
+        item = self.all_position_list.currentItem()
+        item = item.text()
+        data = item.split(' | ')
+        date, admin = data[0], data[1]
+        data = data[2].split(' - ')
+        position, count = data[0], data[1]
+        cur.execute(f'DELETE ONE FROM admin_bar WHERE date = "{date}" AND admin = "{admin}" AND position = "{position} AND value = "{count}"')
+        conn.commit()
+        print(date, admin, position, count)
+
+
+    def back (self):
+        second_settings_window.hide()
+        settings_window.show()
+        
 
 class Ui_settings(object):
     def setupUi(self, settings):
@@ -255,18 +517,33 @@ class Ui_settings(object):
 
 
         self.api_label = QtWidgets.QLabel(self.centralwidget)
-        self.api_label.setGeometry(QtCore.QRect(300, 840, 160,25))
+        self.api_label.setGeometry(QtCore.QRect(40, 780, 160,25))
         self.api_label.setText('Введите API ключ: ')
 
         self.api_label.setStyleSheet(style)
         self.api_field = QtWidgets.QTextEdit(self.centralwidget)
-        self.api_field.setGeometry(QtCore.QRect(460,840,250,30))
-        self.api_field.setStyleSheet(style)
+        self.api_field.setGeometry(QtCore.QRect(200,780, 480,30))
+        self.api_field.setStyleSheet('font-size: 13px')
+        try:
+            self.api_field.setText(config_get_value(path, 'api'))
+        except:
+            pass
 
         self.api_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.api_btn.setGeometry(QtCore.QRect(720,840,100,25))
+        self.api_btn.setGeometry(QtCore.QRect(720,780,100,25))
         self.api_btn.setText('Сохранить')
         self.api_btn.clicked.connect(self.set_api)
+
+        self.saved_api_label = QtWidgets.QLabel(self.centralwidget)
+        self.saved_api_label.setGeometry(QtCore.QRect(720,760,100,25))
+        self.saved_api_label.setStyleSheet('color: green')
+        self.saved_api_label.setText('Сохранено')
+        self.saved_api_label.setVisible(False)
+
+        self.next_setting_page = QtWidgets.QPushButton(self.centralwidget)
+        self.next_setting_page.setGeometry(QtCore.QRect(720,840,100,25))
+        self.next_setting_page.setText('Далее')
+        self.next_setting_page.clicked.connect(self.next_window)
 
 
         settings.setCentralWidget(self.centralwidget)
@@ -302,6 +579,11 @@ class Ui_settings(object):
 
     def activate_add_item(self):
         self.add_item_btn.setEnabled(True)
+
+    def activate_api(self):
+        self.api_btn.setEnabled(True)
+        self.api_btn.setStyleSheet(style)
+        self.saved_api_label.setVisible(False)
 
 
     ######################################
@@ -372,8 +654,16 @@ class Ui_settings(object):
         self.name_item_label.setVisible(False)
 
     def set_api(self):
+        self.saved_api_label.setVisible(True)
+        self.api_btn.setStyleSheet('background: gray;\ncolor: white')
+        self.api_btn.setEnabled(False)
+        QTimer.singleShot(1500, self.activate_api)
         key = self.api_field.toPlainText()
         add_api(path, key)
+
+    def next_window(self):
+        settings_window.hide()
+        second_settings_window.show()
 
     def to_menu(self):
         settings_window.hide()
@@ -820,6 +1110,14 @@ if __name__ == "__main__":
     settings_window = QtWidgets.QMainWindow()
     stngs_wndw = Ui_settings()
     stngs_wndw.setupUi(settings_window)
+
+    ########################
+    ##Второе окно настроек##
+    ########################
+    second_settings_window = QtWidgets.QMainWindow()
+    second_settings_window_class = Ui_Settings_second()
+    second_settings_window_class.setupUi(second_settings_window)
+
 
     MainWindow.show()
     sys.exit(app.exec())
