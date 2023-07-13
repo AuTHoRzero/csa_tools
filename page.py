@@ -82,6 +82,74 @@ def config_get_value(path, setting):
     return value
 
 
+class Ui_Password(object):
+    def setupUi(self, Password):
+        Password.setObjectName("Password")
+        Password.resize(558, 138)
+        self.ok_box = QtWidgets.QDialogButtonBox(parent=Password)
+        self.ok_box.setGeometry(QtCore.QRect(460, 100, 81, 25))
+        self.ok_box.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
+        self.ok_box.setObjectName("ok_box")
+        self.ok_box.clicked.connect(self.ok)
+        self.discard_box = QtWidgets.QDialogButtonBox(parent=Password)
+        self.discard_box.setGeometry(QtCore.QRect(20, 100, 81, 25))
+        self.discard_box.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel)
+        self.discard_box.setObjectName("discard_box")
+        self.discard_box.clicked.connect(self.discard)
+        self.textEdit = QtWidgets.QTextEdit(parent=Password)
+        self.textEdit.setGeometry(QtCore.QRect(20, 50, 521, 31))
+        self.textEdit.setObjectName("textEdit")
+        self.enter_manager_passowrd_label = QtWidgets.QLabel(parent=Password)
+        self.enter_manager_passowrd_label.setGeometry(QtCore.QRect(20, 20, 281, 17))
+        font = QtGui.QFont()
+        font.setFamily("Ubuntu")
+        font.setPointSize(12)
+        font.setBold(False)
+        font.setItalic(True)
+        self.enter_manager_passowrd_label.setFont(font)
+        self.enter_manager_passowrd_label.setObjectName("enter_manager_passowrd_label")
+
+        self.password_field = QtWidgets.QLabel(parent=Password)
+        self.password_field.setGeometry(QtCore.QRect(320, 100, 131, 21))
+        self.password_field.setStyleSheet("color: red")
+        self.password_field.setObjectName("password_field")
+        self.password_field.setVisible(False)
+
+        self.retranslateUi(Password)
+        QtCore.QMetaObject.connectSlotsByName(Password)
+
+    def retranslateUi(self, Password):
+        _translate = QtCore.QCoreApplication.translate
+        Password.setWindowTitle(_translate("Password", "Dialog"))
+        self.enter_manager_passowrd_label.setText(_translate("Password", "Введите пароль менеджера:"))
+        self.password_field.setText(_translate("Password", "Неверный пароль"))
+
+    def ok(self):
+        password = self.textEdit.toPlainText()
+        self.textEdit.clear()
+        try:
+            true_password = config_get_value(path, 'manager_passowrd')
+            password = hashlib.md5(password.encode())
+            password = password.hexdigest()
+            if password == true_password:
+                MainWindow.setEnabled(True)
+                MainWindow.close()
+                settings_window.show()
+                Password_window.close()
+            else:
+                self.password_field.setVisible(True)
+        except:
+            MainWindow.setEnabled(True)
+            MainWindow.close()
+            Password_window.close()
+            settings_window.show()
+
+    def discard(self):
+        MainWindow.setEnabled(True)
+        Password_window.close()
+
+
+
 class Ui_Settings_second(object):
     def setupUi(self, Settings_second):
         Settings_second.setObjectName("Settings_second")
@@ -1134,8 +1202,10 @@ class Ui_MainWindow(object):                #Основное окно (меню
         inv_history.show()
 
     def settings(self):
-        MainWindow.hide()
-        settings_window.show()
+        Password_window.show()
+        MainWindow.setDisabled(True)
+#        settings_window.show()
+
 
     def exit(self):
         MainWindow.close()
@@ -1151,6 +1221,12 @@ if __name__ == "__main__":
     
 
     bar = Ui_Bar()
+    ########################
+    ##Диалог запрос пароля##
+    ########################
+    Password_window = QtWidgets.QDialog()
+    pass_ui = Ui_Password()
+    pass_ui.setupUi(Password_window)
 
     #################
     ##Основное окно##
