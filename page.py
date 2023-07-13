@@ -88,6 +88,7 @@ class Ui_Settings_second(object):
         Settings_second.resize(742, 880)
         self.centralwidget = QtWidgets.QWidget(parent=Settings_second)
         self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setStyleSheet(style)
 
         ################
         ##Новый пароль##
@@ -193,10 +194,14 @@ class Ui_Settings_second(object):
         self.confirm_admin_btn.setText('Подтвердить')
         self.confirm_admin_btn.clicked.connect(self.search_by_admin)
 
-
+        ###################################
+        ##Лист с поизициями одного админа##
+        ###################################
         self.admin_positions_list = QtWidgets.QListWidget(parent=self.centralwidget)
         self.admin_positions_list.setGeometry(QtCore.QRect(10, 540, 341, 251))
         self.admin_positions_list.setObjectName("admin_positions_list")
+        self.admin_positions_list.clicked.connect(self.selected_by_admin_list)
+
         self.summ_bar_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.summ_bar_label.setGeometry(QtCore.QRect(360, 550, 151, 17))
         self.summ_bar_label.setObjectName("summ_bar_label")
@@ -216,22 +221,45 @@ class Ui_Settings_second(object):
         self.delete_all_btn.clicked.connect(self.delete_all)
         self.delete_all_btn.setStyleSheet(style)
 
+        ##############################################
+        ##Удаление одной позиции из списка по админу##
+        ##############################################
         self.delete_tovar_btn = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.delete_tovar_btn.setGeometry(QtCore.QRect(550, 630, 121, 31))
+        self.delete_tovar_btn.setGeometry(QtCore.QRect(550, 660, 121, 31))
         self.delete_tovar_btn.setObjectName("delete_tovar_btn")
+        self.delete_tovar_btn.setStyleSheet("color: red;\nbackground: rgb(35,35,35)")
+        self.delete_tovar_btn.setVisible(False)
+        self.delete_tovar_btn.clicked.connect(self.delete_one_from_by_admin_list)
+
+        ##############################################
+        ##Выбранная позиция по списку администратора##
+        ##############################################
         self.tovar_name_label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.tovar_name_label.setGeometry(QtCore.QRect(360, 630, 181, 31))
+        self.tovar_name_label.setGeometry(QtCore.QRect(360, 630, 181, 81))
         self.tovar_name_label.setObjectName("tovar_name_label")
+        self.tovar_name_label.setVisible(False)
+
         self.delete_all_from_admin_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.delete_all_from_admin_btn.setGeometry(QtCore.QRect(370, 754, 311, 31))
         self.delete_all_from_admin_btn.setObjectName("delete_all_from_admin_btn")
+        self.delete_all_from_admin_btn.clicked.connect(self.delete_by_admin_all)
+        
+        ################################################
+        ##Название выделенной позиции из общего списка##
+        ################################################
         self.position_from_all_label = QtWidgets.QLabel(parent=self.centralwidget)
-        self.position_from_all_label.setGeometry(QtCore.QRect(530, 426, 121, 16))
+        self.position_from_all_label.setGeometry(QtCore.QRect(530, 306, 141, 100))
         self.position_from_all_label.setObjectName("position_from_all_label")
+        self.position_from_all_label.setVisible(False)
 
+        ############################################
+        ##Кнопка удаления позиции из общего списка##
+        ############################################
         self.delete_from_all_btn = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.delete_from_all_btn.setGeometry(QtCore.QRect(650, 420, 89, 25))
+        self.delete_from_all_btn.setGeometry(QtCore.QRect(530, 420, 200, 25))
         self.delete_from_all_btn.setObjectName("delete_from_all_btn")
+        self.delete_from_all_btn.setStyleSheet('color: red;\nbackground: rgb(35,35,35)')
+        self.delete_from_all_btn.setVisible(False)
         self.delete_from_all_btn.clicked.connect(self.delete_one_from_all_list)
 
         ################
@@ -293,21 +321,28 @@ class Ui_Settings_second(object):
         config_set_discount(path, str(value))
 
     def search_by_admin(self):
+        try:
+            self.admin_positions_list.clear()
+        except:
+            pass
         admin_name = self.admin_name_combo_box.currentText()
         cur.execute(f'SELECT * FROM admin_bar WHERE admin = "{admin_name}"')
         results = cur.fetchall()
         summ = 0
         for result in results:
             summ = summ + (result[4] * result[3])
-            self.admin_positions_list.addItem(f'{result[0]}  {result[1]}  {int(result[3])} - {result[2]}')
-        self.label_bar_admin.setText(f'{str(summ)} ₽')
+            self.admin_positions_list.addItem(f'{result[0]} | {result[1]} | {int(result[3])} - {result[2]}')
+        self.label_bar_admin.setText(f'{int(summ)} ₽')
         discount = int(config_get_value(path, 'discount'))
         discount = summ / 100 * (100-discount)
-        self.label_bar_sale.setText(f'{discount} ₽')
+        self.label_bar_sale.setText(f'{int(discount)} ₽')
 
     def selected_from_all_list(self):
+        self.delete_from_all_btn.setVisible(True)
         item = self.all_position_list.currentItem()
-        print(item.text())
+        text = item.text().split(' | ')
+        self.position_from_all_label.setVisible(True)
+        self.position_from_all_label.setText(f'{text[0]}\n{text[1]}\n{text[2]} шт.')
 
     def delete_all(self):
         i = 0
@@ -320,15 +355,57 @@ class Ui_Settings_second(object):
 
     def delete_one_from_all_list(self):
         item = self.all_position_list.currentItem()
+        index = self.all_position_list.currentIndex().row()
         item = item.text()
         data = item.split(' | ')
         date, admin = data[0], data[1]
         data = data[2].split(' - ')
         position, count = data[0], data[1]
-        cur.execute(f'DELETE ONE FROM admin_bar WHERE date = "{date}" AND admin = "{admin}" AND position = "{position} AND value = "{count}"')
+        cur.execute(f'DELETE FROM admin_bar WHERE date = "{date}" AND admin = "{admin}" AND position = "{position}" AND value = "{count}"')
         conn.commit()
-        print(date, admin, position, count)
+        self.all_position_list.takeItem(index)
+        self.delete_from_all_btn.setVisible(False)
+        self.position_from_all_label.setVisible(False)
+        
 
+    def selected_by_admin_list(self):
+        item = self.admin_positions_list.currentItem()
+        text = item.text().split(' | ')
+        self.tovar_name_label.setVisible(True)
+        self.delete_tovar_btn.setVisible(True)
+        self.tovar_name_label.setText(f'{text[0]}\n{text[1]}\n{text[2]}')
+
+    def delete_one_from_by_admin_list(self):
+        admin = self.admin_name_combo_box.currentText()
+        item = self.admin_positions_list.currentItem()
+        index = self.admin_positions_list.currentIndex().row()
+        data = item.text().split(' | ')
+        data_1 = data[2].split(' - ')
+        date, position, value = data[0], data_1[1], data_1[0]
+        cur.execute(f'DELETE FROM admin_bar WHERE admin = "{admin}" AND date = "{date}" AND position = "{position}" AND value = "{value}"')
+        conn.commit()
+        self.tovar_name_label.setVisible(False)
+        self.delete_tovar_btn.setVisible(False)
+        self.admin_positions_list.takeItem(index)
+        cur.execute(f'SELECT * FROM admin_bar WHERE admin = "{admin}"')
+        results = cur.fetchall()
+        summ = 0
+        for result in results:
+            summ = summ + result[4]
+        self.label_bar_admin.setText(f'{int(summ)} ₽')
+        discount = config_get_value(path, 'discount')
+        summ_with_discount = int(summ) /100 * (100 - int(discount))
+        self.label_bar_sale.setText(f'{int(summ_with_discount)} ₽')
+
+    def delete_by_admin_all(self):
+        admin = self.admin_name_combo_box.currentText()
+        cur.execute(f'DELETE FROM admin_bar WHERE admin = "{admin}"')
+        conn.commit()
+        self.admin_positions_list.clear()
+        self.tovar_name_label.setVisible(False)
+        self.delete_tovar_btn.setVisible(False)
+        self.label_bar_sale.setText('0 ₽')
+        self.label_bar_admin.setText('0 ₽')
 
     def back (self):
         second_settings_window.hide()
@@ -802,12 +879,11 @@ class Ui_Bar(object):
             name = name.widget().text()
             count = self.grid.itemAtPosition(i, 1)
             count = count.widget().value()
-            today = datetime.datetime.now()
-            to_insrt = f'{today.year}-{today.month}-{today.day}'
+            today = datetime.datetime.now().strftime('%d.%m.%Y %H:%M.%S')
             if count > 0:
                 cur.execute(f'SELECT * FROM positions WHERE name = "{str(name)}"')
                 res = cur.fetchall()
-                cur.execute(f'INSERT INTO admin_bar VALUES("{to_insrt}", "{admin_name}", "{name}", "{count}", "{res[0][1]}")')
+                cur.execute(f'INSERT INTO admin_bar VALUES("{today}", "{admin_name}", "{name}", "{count}", "{res[0][1]}")')
                 conn.commit()
             i = i +1
 
