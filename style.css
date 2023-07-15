@@ -1,6 +1,7 @@
 QPushButton{
     background-color: rgb(245, 232, 50);
     color: rgb(0, 0, 0);
+    border-radius: 10px;
 }
 
 QDoubleSpinBox{
@@ -10,8 +11,15 @@ QDoubleSpinBox{
 
 QComboBox{
     background-color: rgb(245, 232, 50);
-    color:rgb(0, 0, 0)
+    color:rgb(0, 0, 0);
+    border-radius: 10px;
 }
+QComboBox::drop-down{
+    image: url(icon/dropdown.svg);
+    width: 35px;
+    height: 35px;
+} 
+
 
 QLabel {
     color: white;

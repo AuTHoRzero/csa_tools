@@ -82,6 +82,51 @@ def config_get_value(path, setting):
     return value
 
 
+class Ui_Game_list(object):
+    def setupUi(self, Game_list):
+        Game_list.setObjectName("Game_list")
+        Game_list.resize(603, 600)
+        self.centralwidget = QtWidgets.QWidget(parent=Game_list)
+        self.centralwidget.setObjectName("centralwidget")
+        self.scrollArea = QtWidgets.QScrollArea(parent=self.centralwidget)
+        self.scrollArea.setGeometry(QtCore.QRect(0, 40, 601, 491))
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.setObjectName("scrollArea")
+        self.scrollAreaWidgetContents_2 = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents_2.setGeometry(QtCore.QRect(0, 0, 599, 489))
+        self.scrollAreaWidgetContents_2.setObjectName("scrollAreaWidgetContents_2")
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents_2)
+        self.back_label = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.back_label.setGeometry(QtCore.QRect(10, 560, 89, 25))
+        self.back_label.setObjectName("back_label")
+        self.confirm_label = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.confirm_label.setGeometry(QtCore.QRect(500, 560, 89, 25))
+        self.confirm_label.setObjectName("confirm_label")
+        self.saved_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.saved_label.setGeometry(QtCore.QRect(500, 540, 91, 17))
+        self.saved_label.setObjectName("saved_label")
+        self.pc_num_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.pc_num_label.setGeometry(QtCore.QRect(0, 0, 101, 41))
+        font = QtGui.QFont()
+        font.setPointSize(17)
+        font.setBold(True)
+        self.pc_num_label.setFont(font)
+        self.pc_num_label.setObjectName("pc_num_label")
+        Game_list.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(Game_list)
+        QtCore.QMetaObject.connectSlotsByName(Game_list)
+
+    def retranslateUi(self, Game_list):
+        _translate = QtCore.QCoreApplication.translate
+        Game_list.setWindowTitle(_translate("Game_list", "MainWindow"))
+        self.back_label.setText(_translate("Game_list", "Назад"))
+        self.confirm_label.setText(_translate("Game_list", "Принять"))
+        self.saved_label.setText(_translate("Game_list", "Сохранено"))
+        self.pc_num_label.setText(_translate("Game_list", "PC00"))
+
+
+
 class Ui_Password(object):
     def setupUi(self, Password):
         Password.setStyleSheet("QDialog{background-image: url(background.png);\nbackground-position: absolute;}")
@@ -1144,26 +1189,22 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(170, 100, 260, 30))
-        self.pushButton.setStyleSheet("background-color: rgb(245, 232, 50);\n"
-"color: rgb(0, 0, 0);")
+        self.pushButton.setStyleSheet(style)
         self.pushButton.setObjectName("Inventarization")
         self.pushButton.clicked.connect(self.invent)
         self.pushButton_2 = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(170, 170, 260, 30))
-        self.pushButton_2.setStyleSheet("background-color: rgb(245, 232, 50);\n"
-"color: rgb(0, 0, 0);")
+        self.pushButton_2.setStyleSheet(style)
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.clicked.connect(self.bar_administrator)
         self.pushButton_3 = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(170, 240, 260, 30))
-        self.pushButton_3.setStyleSheet("background-color: rgb(245, 232, 50);\n"
-"color: rgb(0, 0, 0);")
+        self.pushButton_3.setStyleSheet(style)
         self.pushButton_3.setObjectName("pushButton_3")
         self.pushButton_3.clicked.connect(self.history_inv)
         self.exit_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.exit_btn.setGeometry(QtCore.QRect(170, 700, 260, 30))
-        self.exit_btn.setStyleSheet("background-color: rgb(245, 232, 50);\n"
-"color: rgb(0, 0, 0);")
+        self.exit_btn.setStyleSheet(style)
         self.exit_btn.setObjectName("exit_btn")
         self.exit_btn.clicked.connect(self.exit)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -1171,13 +1212,19 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        self.pc_list_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.pc_list_btn.setText('Обновление игр')
+        self.pc_list_btn.setGeometry(QtCore.QRect(170, 310, 260, 30))
+        self.pc_list_btn.setStyleSheet(style)
+        self.pc_list_btn.clicked.connect(self.pc_list)
+
+
         ###################
         ##Кнопка настроек##
         ###################
         self.settings_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.settings_btn.setGeometry(QtCore.QRect(170, 630, 260, 30))
-        self.settings_btn.setStyleSheet("background-color: rgb(245, 232, 50);\n"
-"color: rgb(0, 0, 0);")
+        self.settings_btn.setStyleSheet(style)
         self.settings_btn.setObjectName("setting_btn")
         self.settings_btn.clicked.connect(self.settings)
         
@@ -1213,6 +1260,10 @@ class Ui_MainWindow(object):                #Основное окно (меню
         MainWindow.setDisabled(True)
 #        MainWindow.close()
 #        settings_window.show()
+
+    def pc_list(self):
+        MainWindow.show()
+#        pc_list_window.show()
 
 
     def exit(self):
@@ -1278,6 +1329,19 @@ if __name__ == "__main__":
     second_settings_window_class = Ui_Settings_second()
     second_settings_window_class.setupUi(second_settings_window)
 
+#    #############
+#    ##Список Пк##
+#    #############
+#    pc_list_window = QtWidgets.QMainWindow()
+#    pc_list_window_class = Ui_game_update()
+#    pc_list_window_class.setupUi(pc_list_window)
+
+    #############################
+    ##Список игр для обновления##
+    #############################
+    game_list_window = QtWidgets.QMainWindow()
+    game_list_window_class = Ui_Game_list()
+    game_list_window_class.setupUi(game_list_window)
 
     MainWindow.show()
     sys.exit(app.exec())
