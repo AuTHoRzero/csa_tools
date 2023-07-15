@@ -249,29 +249,22 @@ class Ui_Settings_second(object):
         font.setPointSize(25)
         self.Bar_admin_big_label.setFont(font)
         self.Bar_admin_big_label.setObjectName("Bar_admin_big_label")
-        self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(10, 170, 341, 31))
-        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label_4 = QtWidgets.QLabel(parent=self.horizontalLayoutWidget)
+        self.label_4 = QtWidgets.QLabel(parent=self.centralwidget)
         self.label_4.setObjectName("label_4")
-        self.horizontalLayout.addWidget(self.label_4)
-        self.spinBox = QtWidgets.QSpinBox(parent=self.horizontalLayoutWidget)
+        self.label_4.setGeometry(QtCore.QRect(10,172,151,21))
+        self.spinBox = QtWidgets.QSpinBox(parent=self.centralwidget)
         self.spinBox.setMaximum(100)
         self.spinBox.setObjectName("spinBox")
+        self.spinBox.setGeometry(QtCore.QRect(170,170,81,26))
         try:
             discount = config_get_value(path, "discount")
             self.spinBox.setValue(int(discount))
         except:
             pass
-        self.horizontalLayout.addWidget(self.spinBox)
-        self.set_discount_btn = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget)
+        self.set_discount_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.set_discount_btn.setObjectName("pushButton_2")
         self.set_discount_btn.clicked.connect(self.set_discount)
-        self.horizontalLayout.addWidget(self.set_discount_btn)
-
+        self.set_discount_btn.setGeometry(QtCore.QRect(260,170,190,25))
 
         self.Change_password_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.Change_password_label.setGeometry(QtCore.QRect(10, 20, 171, 31))
@@ -606,25 +599,22 @@ class Ui_settings(object):
         self.add_admin_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.add_admin_label.setGeometry(QtCore.QRect(530, 20, 171, 17))
         self.add_admin_label.setObjectName("add_admin_label")
-        self.horizontalLayoutWidget_2 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget_2.setGeometry(QtCore.QRect(530, 50, 281, 31))
-        self.horizontalLayoutWidget_2.setObjectName("horizontalLayoutWidget_2")
-        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_2)
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
-        self.Name_add_admin = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_2)
+
+        self.Name_add_admin = QtWidgets.QLabel(self.centralwidget)
         self.Name_add_admin.setObjectName("Name_add_admin")
-        self.horizontalLayout_2.addWidget(self.Name_add_admin)
-        self.add_admin_text_field = QtWidgets.QTextEdit(parent=self.horizontalLayoutWidget_2)
+        self.Name_add_admin.setGeometry(QtCore.QRect(520,50,34,31))
+        self.add_admin_text_field = QtWidgets.QTextEdit(self.centralwidget)
         self.add_admin_text_field.setObjectName("add_admin_text_field")
-        self.horizontalLayout_2.addWidget(self.add_admin_text_field)
-        self.add_admin_btn = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_2)
+        self.add_admin_text_field.setGeometry(QtCore.QRect(570, 50, 181, 31))
+
+        self.add_admin_btn = QtWidgets.QPushButton(self.centralwidget)
         self.add_admin_btn.setEnabled(False)
         self.add_admin_btn.setStyleSheet("color: rgb(69, 186, 4);\n"
 "background-color: rgb(35, 35, 35);")
+        self.add_admin_btn.setGeometry(QtCore.QRect(760,50,81,31))
         self.add_admin_btn.setObjectName("add_admin_btn")
         self.add_admin_btn.clicked.connect(self.add_admin)
-        self.horizontalLayout_2.addWidget(self.add_admin_btn)
+
         self.add_admin_text_field.textChanged.connect(self.activate_add_admin)        #Активируем кнопку
         self.item_list = QtWidgets.QLabel(parent=self.centralwidget)
         self.item_list.setGeometry(QtCore.QRect(20, 330, 251, 17))
@@ -648,31 +638,24 @@ class Ui_settings(object):
             self.list_item_widget.addItem(f'{item[0]} | {item[1]}')
 
 
-        self.horizontalLayoutWidget_3 = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget_3.setGeometry(QtCore.QRect(20, 780, 321, 31))
-        self.horizontalLayoutWidget_3.setObjectName("horizontalLayoutWidget_3")
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget_3)
-        self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         ##################################
         ##Наименование выбранной позиции##
         ##################################
-        self.name_item_label = QtWidgets.QLabel(parent=self.horizontalLayoutWidget_3)
+        self.name_item_label = QtWidgets.QLabel(self.centralwidget)
         self.name_item_label.setVisible(False)
         self.name_item_label.setObjectName("name_item_label")
-        self.horizontalLayout_3.addWidget(self.name_item_label)
-
+        self.name_item_label.setGeometry(QtCore.QRect(520, 480, 220, 40))
         ###########################
         ##Кнопка удаления позиции##
         ###########################
-        self.delete_item_btn = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget_3)
+        self.delete_item_btn = QtWidgets.QPushButton(self.centralwidget)
         self.delete_item_btn.setVisible(False)
         self.delete_item_btn.setStyleSheet("color: rgb(192, 28, 40);\n"
 "background-color: rgb(35, 35, 35);")
+        self.delete_item_btn.setGeometry(QtCore.QRect(740, 490, 80, 25))
         self.delete_item_btn.setObjectName("delete_item_btn")
         self.delete_item_btn.clicked.connect(self.del_item)
 
-        self.horizontalLayout_3.addWidget(self.delete_item_btn)
         self.gridLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(530, 360, 291, 71))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
@@ -1065,7 +1048,7 @@ class Inventory(object):
         self.content_widget = QtWidgets.QWidget()
         self.content_widget.setGeometry(QtCore.QRect(0, 0, 248, 538))
         self.content_widget.setObjectName("content_widget")
-        self.content_widget.setStyleSheet("background-color: black;\ncolor: white;\nborder-color: rgb(245, 232, 50);")
+        self.content_widget.setStyleSheet("background-color: rgb(45,45,45);\ncolor: white;\nborder-color: rgb(245, 232, 50);")
         self.grid = QtWidgets.QGridLayout(self.content_widget)
         self.label_1 = QtWidgets.QLabel('Label')
         cur.execute('SELECT * FROM positions')
@@ -1088,7 +1071,7 @@ class Inventory(object):
         self.content_widget_1 = QtWidgets.QWidget()
         self.content_widget_1.setGeometry(QtCore.QRect(0, 0, 248, 538))
         self.content_widget_1.setObjectName("content_widget_1")
-        self.content_widget_1.setStyleSheet("background-color: black;\ncolor: white;")
+        self.content_widget_1.setStyleSheet("background-color: rgb(45,45,45);\ncolor: white;")
         self.grid_1 = QtWidgets.QGridLayout(self.content_widget_1)
         self.send_label = QtWidgets.QLabel(self.centralwidget)
         self.send_label.setGeometry(QtCore.QRect(490,690,90,20))

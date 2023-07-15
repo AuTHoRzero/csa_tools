@@ -20,6 +20,16 @@ QComboBox::drop-down{
     height: 35px;
 } 
 
+QTextEdit{
+    border-radius: 10px;
+    background-color: rgb(45,45,45);
+    color: white;
+}
+
+QListWidget{
+    background-color: rgb(45, 45, 45);
+    color: white;
+}
 
 QLabel {
     color: white;
