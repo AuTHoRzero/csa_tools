@@ -1082,6 +1082,7 @@ class Inventory(object):
         for i in result:
             object_0 = QtWidgets.QLabel(f'{i[0]}')
             object_1 = QtWidgets.QDoubleSpinBox()
+            object_0.setStyleSheet(style)
             object_1.setStyleSheet(style)
             object_1.setMaximum(99999)
             self.grid_1.addWidget(object_0, s, 0)
