@@ -39,6 +39,14 @@ QTextEdit{
     border-color: rgb(245, 232, 50);
 }
 
+QLineEdit{
+    border-radius: 10px;
+    background-color: rgb(45, 45, 45);
+    color: white;
+    border: 1px solid;
+    border-color: rgb(245, 232, 50);
+}
+
 QListWidget{
     background-image: url(background.png);
     color: white;

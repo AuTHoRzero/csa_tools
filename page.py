@@ -13,7 +13,7 @@ import hashlib
 
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtCore, QtWidgets
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget
+from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
 
@@ -134,19 +134,24 @@ class Ui_Password(object):
         Password.setObjectName("Password")
         Password.setFixedSize(558, 138)
         Password.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
-        self.ok_box = QtWidgets.QDialogButtonBox(parent=Password)
+        self.ok_box = QtWidgets.QPushButton(parent=Password)
         self.ok_box.setGeometry(QtCore.QRect(460, 100, 81, 25))
-        self.ok_box.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self.ok_box.setObjectName("ok_box")
+        self.ok_box.setStyleSheet(style)
+        self.ok_box.setText('Ок')
         self.ok_box.clicked.connect(self.ok)
-        self.discard_box = QtWidgets.QDialogButtonBox(parent=Password)
+        self.discard_box = QtWidgets.QPushButton(parent=Password)
         self.discard_box.setGeometry(QtCore.QRect(20, 100, 81, 25))
-        self.discard_box.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Cancel)
         self.discard_box.setObjectName("discard_box")
+        self.discard_box.setText('Отмена')
+        self.discard_box.setStyleSheet(style)
         self.discard_box.clicked.connect(self.discard)
-        self.textEdit = QtWidgets.QTextEdit(parent=Password)
+        self.textEdit = QtWidgets.QLineEdit(parent=Password)
         self.textEdit.setGeometry(QtCore.QRect(20, 50, 521, 31))
         self.textEdit.setObjectName("textEdit")
+        self.textEdit.returnPressed.connect(self.ok)
+        self.textEdit.setEchoMode(QLineEdit.EchoMode.Password)
+        self.textEdit.setStyleSheet(style)
         self.enter_manager_passowrd_label = QtWidgets.QLabel(parent=Password)
         self.enter_manager_passowrd_label.setGeometry(QtCore.QRect(20, 20, 281, 17))
         self.enter_manager_passowrd_label.setStyleSheet('color:white')
@@ -174,7 +179,7 @@ class Ui_Password(object):
         self.password_field.setText(_translate("Password", "Неверный пароль"))
 
     def ok(self):
-        password = self.textEdit.toPlainText()
+        password = self.textEdit.text()
         self.textEdit.clear()
         try:
             true_password = config_get_value(path, 'manager_passowrd')
@@ -226,11 +231,10 @@ class Ui_Settings_second(object):
         self.new_password_label.setGeometry(QtCore.QRect(10, 60, 111, 31))
         self.new_password_label.setObjectName("new_password_label")
 
-        self.new_password_field = QtWidgets.QTextEdit(parent=self.centralwidget)
+        self.new_password_field = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.new_password_field.setGeometry(QtCore.QRect(150, 60, 361, 31))
-        self.new_password_field.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        self.new_password_field.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.new_password_field.setObjectName("new_password_field")
+        self.new_password_field.returnPressed.connect(self.change_password)
 
         self.change_password_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.change_password_btn.setGeometry(QtCore.QRect(530, 60, 141, 31))
@@ -428,7 +432,7 @@ class Ui_Settings_second(object):
 
 
     def change_password(self):
-        new_pass = self.new_password_field.toPlainText()
+        new_pass = self.new_password_field.text()
         if new_pass.__len__() < 6:
             self.short_password_label.setVisible(True)
             QTimer.singleShot(5000, self.hide_short_passord_label)
@@ -611,9 +615,10 @@ class Ui_settings(object):
         self.Name_add_admin = QtWidgets.QLabel(self.centralwidget)
         self.Name_add_admin.setObjectName("Name_add_admin")
         self.Name_add_admin.setGeometry(QtCore.QRect(520,50,34,31))
-        self.add_admin_text_field = QtWidgets.QTextEdit(self.centralwidget)
+        self.add_admin_text_field = QtWidgets.QLineEdit(self.centralwidget)
         self.add_admin_text_field.setObjectName("add_admin_text_field")
         self.add_admin_text_field.setGeometry(QtCore.QRect(570, 50, 181, 31))
+        self.add_admin_text_field.returnPressed.connect(self.add_admin)
 
         self.add_admin_btn = QtWidgets.QPushButton(self.centralwidget)
         self.add_admin_btn.setEnabled(False)
@@ -683,7 +688,7 @@ class Ui_settings(object):
         self.doubleSpinBox.setMaximum(99999999.0)
         self.doubleSpinBox.setObjectName("doubleSpinBox")
         self.gridLayout.addWidget(self.doubleSpinBox, 1, 1, 1, 1)
-        self.Item_name_field = QtWidgets.QTextEdit(parent=self.gridLayoutWidget)
+        self.Item_name_field = QtWidgets.QLineEdit(parent=self.gridLayoutWidget)
         self.Item_name_field.setObjectName("Item_name_field")
         self.Item_name_field.textChanged.connect(self.activate_add_item)      #Активируем кнопку
         self.gridLayout.addWidget(self.Item_name_field, 0, 1, 1, 1)
@@ -718,14 +723,15 @@ class Ui_settings(object):
         self.api_label.setText('Введите API ключ: ')
 
         self.api_label.setStyleSheet(style)
-        self.api_field = QtWidgets.QTextEdit(self.centralwidget)
+        self.api_field = QtWidgets.QLineEdit(self.centralwidget)
         self.api_field.setGeometry(QtCore.QRect(200,780, 480,30))
         self.api_field.setStyleSheet('font-size: 13px')
         try:
             self.api_field.setText(config_get_value(path, 'api'))
         except:
             pass
-
+        
+        self.api_field.returnPressed.connect(self.set_api)
         self.api_btn = QtWidgets.QPushButton(self.centralwidget)
         self.api_btn.setGeometry(QtCore.QRect(720,780,100,25))
         self.api_btn.setText('Сохранить')
@@ -787,7 +793,7 @@ class Ui_settings(object):
     ##Добавление/удаление администратора##
     ######################################
     def add_admin(self):
-        self.admin_name = self.add_admin_text_field.toPlainText()
+        self.admin_name = self.add_admin_text_field.text()
         if self.admin_name == '':
             self.error_admin_label.setVisible(True)
         elif self.admin_name == ' ':
@@ -819,7 +825,7 @@ class Ui_settings(object):
 
 
     def add_item(self):
-        item_name = self.Item_name_field.toPlainText()
+        item_name = self.Item_name_field.text()
         item_cost = self.doubleSpinBox.value()
         if item_cost == 0:
             self.error_position_label.setVisible(True)
@@ -855,7 +861,7 @@ class Ui_settings(object):
         self.api_btn.setStyleSheet('background: gray;\ncolor: white')
         self.api_btn.setEnabled(False)
         QTimer.singleShot(1500, self.activate_api)
-        key = self.api_field.toPlainText()
+        key = self.api_field.text()
         add_api(path, key)
 
     def next_window(self):
@@ -1007,7 +1013,7 @@ class Ui_Bar(object):
         self.send.setDisabled(False)
 
     def go_back(self):
-        window_bar.close()
+        window_bar.close() 
         MainWindow.show()
 
 
@@ -1191,7 +1197,7 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.pushButton_2 = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(170, 170, 260, 30))
         self.pushButton_2.setStyleSheet(style)
-        self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton_2.setObjectName("bar_admin")
         self.pushButton_2.clicked.connect(self.bar_administrator)
         self.pushButton_3 = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(170, 240, 260, 30))
