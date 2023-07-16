@@ -342,7 +342,11 @@ class Ui_Settings_second(object):
         self.delete_tovar_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.delete_tovar_btn.setGeometry(QtCore.QRect(550, 660, 121, 31))
         self.delete_tovar_btn.setObjectName("delete_tovar_btn")
-        self.delete_tovar_btn.setStyleSheet("color: red;\nbackground: rgb(35,35,35)")
+        self.delete_tovar_btn.setStyleSheet("QPushButton{background-color: rgb(35, 35, 35);\n"
+"color: rgb(192, 28, 40);}\
+    QPushButton::hover{\
+    background-color: rgb(63,63,63)\
+    }")
         self.delete_tovar_btn.setVisible(False)
         self.delete_tovar_btn.clicked.connect(self.delete_one_from_by_admin_list)
 
@@ -373,7 +377,11 @@ class Ui_Settings_second(object):
         self.delete_from_all_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.delete_from_all_btn.setGeometry(QtCore.QRect(530, 420, 200, 25))
         self.delete_from_all_btn.setObjectName("delete_from_all_btn")
-        self.delete_from_all_btn.setStyleSheet('color: red;\nbackground: rgb(35,35,35)')
+        self.delete_from_all_btn.setStyleSheet("QPushButton{background-color: rgb(35, 35, 35);\n"
+"color: rgb(192, 28, 40);}\
+    QPushButton::hover{\
+    background-color: rgb(63,63,63)\
+    }")
         self.delete_from_all_btn.setVisible(False)
         self.delete_from_all_btn.clicked.connect(self.delete_one_from_all_list)
 
@@ -587,8 +595,11 @@ class Ui_settings(object):
         self.name_admin_label.setGeometry(QtCore.QRect(20,270,157,21))
         self.del_admin_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.del_admin_btn.setVisible(False)
-        self.del_admin_btn.setStyleSheet("background-color: rgb(35, 35, 35);\n"
-"color: rgb(192, 28, 40);")
+        self.del_admin_btn.setStyleSheet("QPushButton{background-color: rgb(35, 35, 35);\n"
+"color: rgb(192, 28, 40);}\
+    QPushButton::hover{\
+    background-color: rgb(63,63,63)\
+    }")
         self.del_admin_btn.setObjectName("del_admin_btn")
         self.del_admin_btn.clicked.connect(self.admin_del)
         self.del_admin_btn.setGeometry(QtCore.QRect(180,270,156,25))
@@ -606,8 +617,11 @@ class Ui_settings(object):
 
         self.add_admin_btn = QtWidgets.QPushButton(self.centralwidget)
         self.add_admin_btn.setEnabled(False)
-        self.add_admin_btn.setStyleSheet("color: rgb(69, 186, 4);\n"
-"background-color: rgb(35, 35, 35);")
+        self.add_admin_btn.setStyleSheet("QPushButton{background-color: rgb(35, 35, 35);\n"
+"color: rgb(69, 186, 4);}\
+    QPushButton::hover{\
+    background-color: rgb(63,63,63)\
+    }")
         self.add_admin_btn.setGeometry(QtCore.QRect(760,50,81,31))
         self.add_admin_btn.setObjectName("add_admin_btn")
         self.add_admin_btn.clicked.connect(self.add_admin)
@@ -647,8 +661,11 @@ class Ui_settings(object):
         ###########################
         self.delete_item_btn = QtWidgets.QPushButton(self.centralwidget)
         self.delete_item_btn.setVisible(False)
-        self.delete_item_btn.setStyleSheet("color: rgb(192, 28, 40);\n"
-"background-color: rgb(35, 35, 35);")
+        self.delete_item_btn.setStyleSheet("QPushButton{background-color: rgb(35, 35, 35);\n"
+"color: rgb(192, 28, 40);}\
+    QPushButton::hover{\
+    background-color: rgb(63,63,63)\
+    }")
         self.delete_item_btn.setGeometry(QtCore.QRect(740, 490, 80, 25))
         self.delete_item_btn.setObjectName("delete_item_btn")
         self.delete_item_btn.clicked.connect(self.del_item)
@@ -680,8 +697,11 @@ class Ui_settings(object):
         self.add_item_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.add_item_btn.setEnabled(False)
         self.add_item_btn.setGeometry(QtCore.QRect(740, 450, 80, 25))
-        self.add_item_btn.setStyleSheet("color: rgb(69, 186, 4);\n"
-"background-color: rgb(35, 35, 35);")
+        self.add_item_btn.setStyleSheet("QPushButton{background-color: rgb(35, 35, 35);\n"
+"color: rgb(69, 186, 4);}\
+    QPushButton::hover{\
+    background-color: rgb(63,63,63)\
+    }")
         self.add_item_btn.setObjectName("add_item_btn")
         self.add_item_btn.clicked.connect(self.add_item)
 
@@ -733,7 +753,7 @@ class Ui_settings(object):
 
     def retranslateUi(self, settings):
         _translate = QtCore.QCoreApplication.translate
-        settings.setWindowTitle(_translate("settings", "MainWindow"))
+        settings.setWindowTitle(_translate("settings", "Настройки"))
         self.list_admins_label.setText(_translate("settings", "Выберите админа из списка"))
         self.name_admin_label.setText(_translate("settings", "Имя"))
         self.del_admin_btn.setText(_translate("settings", "Удалить"))
@@ -880,7 +900,7 @@ class Ui_Inv_history(object):
 
     def retranslateUi(self, Inv_history):
         _translate = QtCore.QCoreApplication.translate
-        Inv_history.setWindowTitle(_translate("Inv_history", "MainWindow"))
+        Inv_history.setWindowTitle(_translate("Inv_history", "История инвентаризаций"))
         self.back.setText(_translate("Inv_history", "Назад"))
 
     def to_menu(self):
@@ -1096,7 +1116,7 @@ class Inventory(object):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Colizeum Tool"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Инвентаризация"))
         self.send_label.setText(_translate('MainWindow', "Отправлено"))
         self.pushButton.setText(_translate("MainWindow", "Назад"))
         self.pushButton_2.setText(_translate("MainWindow", "Отправить"))
@@ -1188,11 +1208,11 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-        self.pc_list_btn = QtWidgets.QPushButton(self.centralwidget)
-        self.pc_list_btn.setText('Обновление игр')
-        self.pc_list_btn.setGeometry(QtCore.QRect(170, 310, 260, 30))
-        self.pc_list_btn.setStyleSheet(style)
-        self.pc_list_btn.clicked.connect(self.pc_list)
+#        self.pc_list_btn = QtWidgets.QPushButton(self.centralwidget)
+#        self.pc_list_btn.setText('Обновление игр')
+#        self.pc_list_btn.setGeometry(QtCore.QRect(170, 310, 260, 30))
+#        self.pc_list_btn.setStyleSheet(style)
+#        self.pc_list_btn.clicked.connect(self.pc_list)
 
 
         ###################
