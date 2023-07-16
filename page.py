@@ -129,11 +129,10 @@ class Ui_Game_list(object):
 
 class Ui_Password(object):
     def setupUi(self, Password):
-        Password.setStyleSheet("QDialog{background-image: url(background.png);\nbackground-position: absolute;}")
+        Password.setStyleSheet("QDialog{background-image: url(background.png);\nbackground-position: absolute;\nborder-radius: 10px;}")
         Password.setObjectName("Password")
         Password.resize(558, 138)
-        Password.setWindowFlag(QtCore.Qt.WindowType.Window | QtCore.Qt.WindowType.WindowCloseButtonHint
-                                 | QtCore.Qt.WindowType.CustomizeWindowHint)
+        Password.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.ok_box = QtWidgets.QDialogButtonBox(parent=Password)
         self.ok_box.setGeometry(QtCore.QRect(460, 100, 81, 25))
         self.ok_box.setStandardButtons(QtWidgets.QDialogButtonBox.StandardButton.Ok)
@@ -559,13 +558,6 @@ class Ui_settings(object):
         self.list_admins_label.setGeometry(QtCore.QRect(20, 20, 281, 17))
         self.list_admins_label.setObjectName("list_admins_label")
 
-        self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(20, 270, 321, 31))
-        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setSpacing(1)
-        self.horizontalLayout.setObjectName("horizontalLayout")
 
         ######################
         ##Текст ошибка админ##
@@ -585,17 +577,18 @@ class Ui_settings(object):
         self.error_position_label.setText('Ошибка')
         self.error_position_label.setStyleSheet("color: rgb(192, 28, 40);")
 
-        self.name_admin_label = QtWidgets.QLabel(parent=self.horizontalLayoutWidget)
+        self.name_admin_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.name_admin_label.setVisible(False)
         self.name_admin_label.setObjectName("name_admin_label")
-        self.horizontalLayout.addWidget(self.name_admin_label)
-        self.del_admin_btn = QtWidgets.QPushButton(parent=self.horizontalLayoutWidget)
+        self.name_admin_label.setGeometry(QtCore.QRect(20,270,157,21))
+        self.del_admin_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.del_admin_btn.setVisible(False)
         self.del_admin_btn.setStyleSheet("background-color: rgb(35, 35, 35);\n"
 "color: rgb(192, 28, 40);")
         self.del_admin_btn.setObjectName("del_admin_btn")
         self.del_admin_btn.clicked.connect(self.admin_del)
-        self.horizontalLayout.addWidget(self.del_admin_btn)
+        self.del_admin_btn.setGeometry(QtCore.QRect(180,270,156,25))
+
         self.add_admin_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.add_admin_label.setGeometry(QtCore.QRect(530, 20, 171, 17))
         self.add_admin_label.setObjectName("add_admin_label")
@@ -1254,13 +1247,11 @@ class Ui_MainWindow(object):                #Основное окно (меню
         MainWindow.close()
         
 
-Stylesheet = "TitleBar {background-color: rgb(54, 157, 180);}"
 
 if __name__ == "__main__":
     import sys
     path = 'settings.ini'
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyleSheet(Stylesheet)
     
 
     bar = Ui_Bar()
