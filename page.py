@@ -84,6 +84,7 @@ def config_get_value(path, setting):
 
 class Ui_Game_list(object):
     def setupUi(self, Game_list):
+        Game_list.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         Game_list.setObjectName("Game_list")
         Game_list.setFixedSize(603, 600)
         self.centralwidget = QtWidgets.QWidget(parent=Game_list)
@@ -203,6 +204,7 @@ class Ui_Password(object):
 
 class Ui_Settings_second(object):
     def setupUi(self, Settings_second):
+        Settings_second.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         Settings_second.setObjectName("Settings_second")
         Settings_second.setFixedSize(742, 880)
         Settings_second.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
@@ -527,6 +529,7 @@ class Ui_Settings_second(object):
 
 class Ui_settings(object):
     def setupUi(self, settings):
+        settings.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         settings.setObjectName("settings")
         settings.setFixedSize(850, 900)
         settings.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
@@ -990,6 +993,7 @@ class Ui_Bar(object):
 
 class Inventory(object):
     def setupUi(self, MainWindow):
+        MainWindow.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
         MainWindow.setFixedSize(616, 797)
