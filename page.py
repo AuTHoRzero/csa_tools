@@ -886,6 +886,7 @@ class Ui_Inv_history(object):
 
 class Ui_Bar(object):
     def setupUi(self, Bar):
+        Bar.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         Bar.setObjectName("Bar")
         Bar.setFixedSize(416, 751)
         Bar.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
