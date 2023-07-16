@@ -41,6 +41,12 @@ QListWidget{
 
 QSpinBox{
     background-color: rgb(45, 45, 45);
+    color: white;
+}
+
+QScrollBar{
+    color: rgb(245, 232, 50);
+    background-color: rgb(45, 45, 45);
 }
 
 QLabel {

@@ -85,7 +85,7 @@ def config_get_value(path, setting):
 class Ui_Game_list(object):
     def setupUi(self, Game_list):
         Game_list.setObjectName("Game_list")
-        Game_list.resize(603, 600)
+        Game_list.setFixedSize(603, 600)
         self.centralwidget = QtWidgets.QWidget(parent=Game_list)
         self.centralwidget.setObjectName("centralwidget")
         self.scrollArea = QtWidgets.QScrollArea(parent=self.centralwidget)
@@ -129,9 +129,9 @@ class Ui_Game_list(object):
 
 class Ui_Password(object):
     def setupUi(self, Password):
-        Password.setStyleSheet("QDialog{background-image: url(background.png);\nbackground-position: absolute;\nborder-radius: 10px;}")
+        Password.setStyleSheet("QDialog{background-image: url(background.png);\nbackground-position: absolute;}")
         Password.setObjectName("Password")
-        Password.resize(558, 138)
+        Password.setFixedSize(558, 138)
         Password.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
         self.ok_box = QtWidgets.QDialogButtonBox(parent=Password)
         self.ok_box.setGeometry(QtCore.QRect(460, 100, 81, 25))
@@ -148,6 +148,7 @@ class Ui_Password(object):
         self.textEdit.setObjectName("textEdit")
         self.enter_manager_passowrd_label = QtWidgets.QLabel(parent=Password)
         self.enter_manager_passowrd_label.setGeometry(QtCore.QRect(20, 20, 281, 17))
+        self.enter_manager_passowrd_label.setStyleSheet('color:white')
         font = QtGui.QFont()
         font.setFamily("Ubuntu")
         font.setPointSize(12)
@@ -203,7 +204,7 @@ class Ui_Password(object):
 class Ui_Settings_second(object):
     def setupUi(self, Settings_second):
         Settings_second.setObjectName("Settings_second")
-        Settings_second.resize(742, 880)
+        Settings_second.setFixedSize(742, 880)
         Settings_second.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
         self.centralwidget = QtWidgets.QWidget(parent=Settings_second)
         self.centralwidget.setObjectName("centralwidget")
@@ -527,7 +528,7 @@ class Ui_Settings_second(object):
 class Ui_settings(object):
     def setupUi(self, settings):
         settings.setObjectName("settings")
-        settings.resize(850, 900)
+        settings.setFixedSize(850, 900)
         settings.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
         self.centralwidget = QtWidgets.QWidget(parent=settings)
         self.centralwidget.setObjectName("centralwidget")
@@ -847,7 +848,7 @@ class Ui_settings(object):
 class Ui_Inv_history(object):
     def setupUi(self, Inv_history):
         Inv_history.setObjectName("Inv_history")
-        Inv_history.resize(400, 800)
+        Inv_history.setFixedSize(400, 800)
         Inv_history.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
         self.centralwidget = QtWidgets.QWidget(parent=Inv_history)
         self.centralwidget.setObjectName("centralwidget")
@@ -886,7 +887,7 @@ class Ui_Inv_history(object):
 class Ui_Bar(object):
     def setupUi(self, Bar):
         Bar.setObjectName("Bar")
-        Bar.resize(416, 751)
+        Bar.setFixedSize(416, 751)
         Bar.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
         self.centralwidget = QtWidgets.QWidget(parent=Bar)
         self.centralwidget.setObjectName("centralwidget")
@@ -901,19 +902,14 @@ class Ui_Bar(object):
         self.back.setObjectName("back")
         self.back.setStyleSheet(style)
         self.back.clicked.connect(self.go_back)
-        self.horizontalLayoutWidget = QtWidgets.QWidget(parent=self.centralwidget)
-        self.horizontalLayoutWidget.setGeometry(QtCore.QRect(20, 20, 371, 31))
-        self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.horizontalLayoutWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setSpacing(2)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.label = QtWidgets.QLabel(parent=self.horizontalLayoutWidget)
+
+        self.label = QtWidgets.QLabel(parent=self.centralwidget)
         self.label.setObjectName("label")
-        self.horizontalLayout.addWidget(self.label)
-        self.comboBox = QtWidgets.QComboBox(parent=self.horizontalLayoutWidget)
+        self.label.setGeometry(QtCore.QRect(20,30,101,21))
+        self.comboBox = QtWidgets.QComboBox(parent=self.centralwidget)
         self.comboBox.setCurrentText("")
         self.comboBox.setObjectName("comboBox")
+        self.comboBox.setGeometry(QtCore.QRect(120,30,271,25))
         self.sended_label = QtWidgets.QLabel(self.centralwidget)
         self.sended_label.setGeometry(QtCore.QRect(290, 655, 90,20))
         self.sended_label.setText('Отправлено')
@@ -923,8 +919,6 @@ class Ui_Bar(object):
         admins = cur.fetchall()
         for admin in admins:
             self.comboBox.addItem(admin[0])
-        self.horizontalLayout.addWidget(self.comboBox)
-        self.horizontalLayout.setStretch(1, 4)
         self.scrollArea = QtWidgets.QScrollArea(parent=self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(20, 60, 371, 591))
         self.scrollArea.setWidgetResizable(True)
@@ -997,7 +991,7 @@ class Inventory(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(616, 797)
+        MainWindow.setFixedSize(616, 797)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1152,7 +1146,7 @@ class Ui_MainWindow(object):                #Основное окно (меню
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.resize(600, 800)
+        MainWindow.setFixedSize(600, 800)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
