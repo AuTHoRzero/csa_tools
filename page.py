@@ -1245,20 +1245,8 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.exit_btn.setText(_translate("MainWindow", "Выход"))
 
     def invent(self):
-        i = 800
-        while i > 50:
-            MainWindow.setFixedSize(600, i)
-            time.sleep(0.01)
-            i -= 20
         MainWindow.hide()
-        MainWindow.setFixedSize(600, 850)
-        window_inv.setFixedSize(616, 10)
         window_inv.show()
-        inv = [10, 11, 12, 15, 20, 28, 41, 62, 96, 151, 240, 384, 617, 660, 797]
-        for i in inv:
-            window_inv.setFixedSize(616, i)
-            app.processEvents()
-            time.sleep(0.025)
 
     def bar_administrator(self):
         MainWindow.hide()
