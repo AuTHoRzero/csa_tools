@@ -1,5 +1,6 @@
 QMainWindow{
-    title-color: red;
+    background-image: url(background.png);
+    border-radius: 10px;
 }
 
 QPushButton{

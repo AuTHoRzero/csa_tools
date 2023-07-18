@@ -57,3 +57,23 @@
     background-color: rgba(207, 20, 20, 255);
     border-radius: 15px
 }
+
+#accept_add_admin_btn{
+    color: green;
+    background-color: rgb(45,45,45)
+}
+
+#accept_add_admin_btn::hover{
+    color: green;
+    background-color: rgb(65, 65, 65)
+}
+
+#delete_acc_btn{
+    color: red;
+    background-color: rgb(45,45,45)
+}
+
+#delete_acc_btn::hover{
+    color: red;
+    background-color: rgb(65,65,65)
+}
