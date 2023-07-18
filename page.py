@@ -150,23 +150,34 @@ class Ui_Authorization_window(object):
         login = self.login_field.text()
         login = login.lower()
         password = self.password_field.text()
-        usr.execute(f'SELECT * FROM users WHERE login = "{login}"')
-        all_users = usr.fetchall()
-        try:
-            if all_users[0][1] == password:
-                MainWindow.show()
-                authorize_window.close()
-            else:
-                self.etner_btn.setText("Неверный пароль")
-                self.etner_btn.setObjectName('error_enter_btn')
-                self.etner_btn.setStyleSheet(qstyle)
-                QTimer.singleShot(1200,self.btn_normal)
-        except:
+        if login == '':
             self.etner_btn.setObjectName('error_enter_btn')
             self.etner_btn.setStyleSheet(qstyle)
-            self.etner_btn.setGeometry(QtCore.QRect(205,250,200,30))
-            self.etner_btn.setText("Пользователь не найден")
-            QTimer.singleShot(1200, self.btn_normal)
+            self.etner_btn.setText("Введите логин")
+            QTimer.singleShot(1200,self.btn_normal)
+        elif password == '':
+            self.etner_btn.setObjectName('error_enter_btn')
+            self.etner_btn.setStyleSheet(qstyle)
+            self.etner_btn.setText("Введите пароль")
+            QTimer.singleShot(1200,self.btn_normal)
+        else:
+            usr.execute(f'SELECT * FROM users WHERE login = "{login}"')
+            all_users = usr.fetchall()
+            try:
+                if all_users[0][1] == password:
+                    MainWindow.show()
+                    authorize_window.close()
+                else:
+                    self.etner_btn.setText("Неверный пароль")
+                    self.etner_btn.setObjectName('error_enter_btn')
+                    self.etner_btn.setStyleSheet(qstyle)
+                    QTimer.singleShot(1200,self.btn_normal)
+            except:
+                self.etner_btn.setObjectName('error_enter_btn')
+                self.etner_btn.setStyleSheet(qstyle)
+                self.etner_btn.setGeometry(QtCore.QRect(205,250,200,30))
+                self.etner_btn.setText("Пользователь не найден")
+                QTimer.singleShot(1200, self.btn_normal)
 
     def btn_normal(self):
         self.etner_btn.setText('Вход')
@@ -1327,6 +1338,14 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.settings_btn.setObjectName("setting_btn")
         self.settings_btn.clicked.connect(self.settings)
         
+        #####################################
+        ##Кнопка добавления нового аккаунта##
+        #####################################
+        self.add_user_btn = QtWidgets.QPushButton(self.centralwidget)
+        self.add_user_btn.setGeometry(QtCore.QRect(170, 560, 260, 30))
+        self.add_user_btn.setStyleSheet(style)
+        self.add_user_btn.setText('Добавить аккаунт')
+
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
