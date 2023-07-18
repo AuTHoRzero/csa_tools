@@ -23,8 +23,12 @@ from PyQt6 import QtCore, QtGui, QtWidgets
 ############
 ##Database##
 ############
+
+users_db = sqlite3.connect('users.db')
 conn = sqlite3.connect('CIS_admin_helper.db')
+usr = users_db.cursor()
 cur = conn.cursor()
+usr.execute('CREATE TABLE IF NOT EXISTS users(login TEXT, password TEXT, name TEXT, surname TEXT, post TEXT)')
 cur.execute('CREATE TABLE IF NOT EXISTS inventory(date TEXT, admin TEXT, itog TEXT)')
 cur.execute('CREATE TABLE IF NOT EXISTS admin_bar(date TEXT, admin TEXT, position TEXT, value FLOAT, cost FLOAT)')
 cur.execute('CREATE TABLE IF NOT EXISTS admins(name TEXT)')
@@ -34,6 +38,8 @@ cur.execute('CREATE TABLE IF NOT EXISTS config (parameter TEXT, value TEXT)')
 with open('style.css', 'r') as r:
     style = r.read()
 
+with open ("style.qss", 'r') as st:
+            qstyle = st.read()
 ##########
 ##Config##
 ##########
@@ -80,6 +86,97 @@ def config_get_value(path, setting):
     config.read(path)
     value = config.get('Settings', setting)
     return value
+
+class Ui_Authorization_window(object):
+    def setupUi(self, Authorization):
+        Authorization.setObjectName("MainWindow")
+        Authorization.setFixedSize(600, 400)
+        Authorization.setStyleSheet("")
+        Authorization.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        self.centralwidget = QtWidgets.QWidget(parent=Authorization)
+        
+            
+        self.centralwidget.setStyleSheet(qstyle)
+        self.centralwidget.setObjectName("centralwidget")
+
+        self.etner_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.etner_btn.setGeometry(QtCore.QRect(230, 250, 151, 31))
+        self.etner_btn.setStyleSheet(qstyle)
+        self.etner_btn.setObjectName("enter_btn")
+        self.etner_btn.clicked.connect(self.authorize)
+
+        self.login_field = QtWidgets.QLineEdit(parent=self.centralwidget)
+        self.login_field.setGeometry(QtCore.QRect(180, 130, 240, 30))
+        self.login_field.setObjectName("login_field")
+        self.password_field = QtWidgets.QLineEdit(parent=self.centralwidget)
+        self.password_field.setGeometry(QtCore.QRect(180, 190, 240, 30))
+        self.password_field.setObjectName("password_field")
+        self.password_field.setEchoMode(QLineEdit.EchoMode.Password)
+        self.authorize_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.authorize_label.setGeometry(QtCore.QRect(195, 70, 210, 30))
+        font = QtGui.QFont()
+        font.setPointSize(24)
+        font.setBold(True)
+        font.setItalic(False)
+        font.setStyleStrategy(QtGui.QFont.StyleStrategy.PreferDefault)
+        self.authorize_label.setFont(font)
+        self.authorize_label.setObjectName("authorize_label")
+        self.close_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.close_btn.setGeometry(QtCore.QRect(10, 360, 89, 25))
+        self.close_btn.setObjectName("close_btn")
+        self.close_btn.clicked.connect(self.close)
+        self.forgot_password_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.forgot_password_label.setGeometry(QtCore.QRect(330, 220, 91, 16))
+        font = QtGui.QFont()
+        font.setPointSize(8)
+        font.setUnderline(True)
+        self.forgot_password_label.setFont(font)
+        self.forgot_password_label.setStyleSheet(qstyle)
+        self.forgot_password_label.setObjectName("forgot_password_label")
+        Authorization.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(Authorization)
+        QtCore.QMetaObject.connectSlotsByName(Authorization)
+
+    def retranslateUi(self, Authorization):
+        _translate = QtCore.QCoreApplication.translate
+        Authorization.setWindowTitle(_translate("Authorization", "Авторизация"))
+        self.etner_btn.setText(_translate("Authorization", "Вход"))
+        self.authorize_label.setText(_translate("Authorization", "Авторизация"))
+        self.close_btn.setText(_translate("Authorization", "Выйти"))
+        self.forgot_password_label.setText(_translate("Authorization", "Забыли пароль?"))
+
+    def authorize(self):
+        login = self.login_field.text()
+        login = login.lower()
+        password = self.password_field.text()
+        usr.execute(f'SELECT * FROM users WHERE login = "{login}"')
+        all_users = usr.fetchall()
+        try:
+            if all_users[0][1] == password:
+                MainWindow.show()
+                authorize_window.close()
+            else:
+                self.etner_btn.setText("Неверный пароль")
+                self.etner_btn.setObjectName('error_enter_btn')
+                self.etner_btn.setStyleSheet(qstyle)
+                QTimer.singleShot(1200,self.btn_normal)
+        except:
+            self.etner_btn.setObjectName('error_enter_btn')
+            self.etner_btn.setStyleSheet(qstyle)
+            self.etner_btn.setGeometry(QtCore.QRect(205,250,200,30))
+            self.etner_btn.setText("Пользователь не найден")
+            QTimer.singleShot(1200, self.btn_normal)
+
+    def btn_normal(self):
+        self.etner_btn.setText('Вход')
+        self.etner_btn.setObjectName('enter_btn')
+        self.etner_btn.setStyleSheet(qstyle)
+        self.etner_btn.setGeometry(QtCore.QRect(230, 250, 151, 31))
+        
+
+    def close(self):
+        authorize_window.close()
 
 
 class Ui_Game_list(object):
@@ -1280,6 +1377,14 @@ if __name__ == "__main__":
     
 
     bar = Ui_Bar()
+
+    ####################
+    ##Окно авторизации##
+    ####################
+    authorize_window = QtWidgets.QMainWindow()
+    authorize_window_class = Ui_Authorization_window()
+    authorize_window_class.setupUi(authorize_window)
+
     ########################
     ##Диалог запрос пароля##
     ########################
@@ -1343,7 +1448,7 @@ if __name__ == "__main__":
     game_list_window_class = Ui_Game_list()
     game_list_window_class.setupUi(game_list_window)
 
-    MainWindow.show()
+    authorize_window.show()
     sys.exit(app.exec())
     bot.polling(none_stop=True, interval=0)
 
