@@ -494,6 +494,9 @@ class Ui_Authorization_window(object):
         login = self.login_field.text()
         login = login.lower()
         password = self.password_field.text()
+        if password != '':
+            password = hashlib.md5(password.encode())
+            password = password.hexdigest()
         if login == '':
             self.etner_btn.setObjectName('error_enter_btn')
             self.etner_btn.setStyleSheet(qstyle)
