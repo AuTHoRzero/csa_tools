@@ -87,6 +87,27 @@ def config_get_value(path, setting):
     value = config.get('Settings', setting)
     return value
 
+def config_is_first(path):
+    if not os.path.exists(path):
+        create_config(path)
+    try:
+        config_get_value(path, 'is_first')
+    except:
+        config = configparser.ConfigParser()
+        config.read(path)
+        config.set('Settings', 'is_first', 'False')
+        with open(path, "w") as config_file:
+            config.write(config_file)
+
+def config_not_first(path):
+    if not os.path.exists(path):
+        create_config(path)
+    config = configparser.ConfigParser()
+    config.read(path)
+    config.set('Settings', 'is_first', 'True')
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
 
 
 class Ui_AddUser(object):
@@ -479,10 +500,29 @@ class Ui_Authorization_window(object):
             self.etner_btn.setText("Введите логин")
             QTimer.singleShot(1200,self.btn_normal)
         elif password == '':
-            self.etner_btn.setObjectName('error_enter_btn')
-            self.etner_btn.setStyleSheet(qstyle)
-            self.etner_btn.setText("Введите пароль")
-            QTimer.singleShot(1200,self.btn_normal)
+            try:
+                usr.execute(f'SELECT * FROM users WHERE login = "{login}"')
+                all_users = usr.fetchall()
+                try:
+                    if all_users[0][1] == password:
+                        MainWindow.show()
+                        authorize_window.close()
+                    else:
+                        self.etner_btn.setText("Неверный пароль")
+                        self.etner_btn.setObjectName('error_enter_btn')
+                        self.etner_btn.setStyleSheet(qstyle)
+                        QTimer.singleShot(1200,self.btn_normal)
+                except:
+                    self.etner_btn.setObjectName('error_enter_btn')
+                    self.etner_btn.setStyleSheet(qstyle)
+                    self.etner_btn.setGeometry(QtCore.QRect(205,250,200,30))
+                    self.etner_btn.setText("Пользователь не найден")
+                    QTimer.singleShot(1200, self.btn_normal)
+            except:
+                self.etner_btn.setObjectName('error_enter_btn')
+                self.etner_btn.setStyleSheet(qstyle)
+                self.etner_btn.setText("Введите пароль")
+                QTimer.singleShot(1200,self.btn_normal)
         else:
             usr.execute(f'SELECT * FROM users WHERE login = "{login}"')
             all_users = usr.fetchall()
@@ -1718,10 +1758,16 @@ class Ui_MainWindow(object):                #Основное окно (меню
 
 
 if __name__ == "__main__":
+    
     import sys
     path = 'settings.ini'
     app = QtWidgets.QApplication(sys.argv)
-    
+    config_is_first(path)
+    if config_get_value(path, "is_first") == 'False':
+        usr.execute('INSERT INTO users VALUES ("admin", "", "user", "user", "Управляющий")')
+        users_db.commit()
+        config_not_first(path)
+        
 
     bar = Ui_Bar()
 
@@ -1804,6 +1850,8 @@ if __name__ == "__main__":
 
     authorize_window.show()
     sys.exit(app.exec())
+
+    
     bot.polling(none_stop=True, interval=0)
 
 
