@@ -47,6 +47,7 @@ with open ("style.qss", 'r') as st:
 def create_config(path):
     config = configparser.ConfigParser()
     config.add_section("Settings")
+    config.add_section("Active_user")
     with open (path, 'w') as config_file:
         config.write(config_file)
 
@@ -80,19 +81,19 @@ def config_set_discount(path, discount):
     with open(path, "w") as config_file:
         config.write(config_file)
     
-def config_get_value(path, setting):
+def config_get_value(path, header, setting):
     if not os.path.exists(path):
         create_config(path)
     config = configparser.ConfigParser()
     config.read(path)
-    value = config.get('Settings', setting)
+    value = config.get(header, setting)
     return value
 
 def config_is_first(path):
     if not os.path.exists(path):
         create_config(path)
     try:
-        config_get_value(path, 'is_first')
+        config_get_value(path, 'Settings', 'is_first')
     except:
         config = configparser.ConfigParser()
         config.read(path)
@@ -106,6 +107,15 @@ def config_not_first(path):
     config = configparser.ConfigParser()
     config.read(path)
     config.set('Settings', 'is_first', 'True')
+    with open(path, "w") as config_file:
+        config.write(config_file)
+
+def config_active_user(path, user):
+    if not os.path.exists(path):
+        create_config(path)
+    config = configparser.ConfigParser()
+    config.read(path)
+    config.set('Active_user', 'user', user)
     with open(path, "w") as config_file:
         config.write(config_file)
 
@@ -517,6 +527,7 @@ class Ui_Authorization_window(object):
                 all_users = usr.fetchall()
                 try:
                     if all_users[0][1] == password:
+                        config_active_user(path, all_users[0][0])
                         MainWindow.show()
                         authorize_window.close()
                     else:
@@ -540,6 +551,7 @@ class Ui_Authorization_window(object):
             all_users = usr.fetchall()
             try:
                 if all_users[0][1] == password:
+                    config_active_user(path, all_users[0][0])
                     MainWindow.show()
                     authorize_window.close()
                 else:
@@ -668,7 +680,7 @@ class Ui_Password(object):
         password = self.textEdit.text()
         self.textEdit.clear()
         try:
-            true_password = config_get_value(path, 'manager_passowrd')
+            true_password = config_get_value(path,'Settings', 'manager_passowrd')
             password = hashlib.md5(password.encode())
             password = password.hexdigest()
             if password == true_password:
@@ -752,7 +764,7 @@ class Ui_Settings_second(object):
         self.spinBox.setObjectName("spinBox")
         self.spinBox.setGeometry(QtCore.QRect(170,170,81,26))
         try:
-            discount = config_get_value(path, "discount")
+            discount = config_get_value(path, 'Settings',"discount")
             self.spinBox.setValue(int(discount))
         except:
             pass
@@ -792,10 +804,10 @@ class Ui_Settings_second(object):
         self.admin_name_combo_box = QtWidgets.QComboBox(parent=self.centralwidget)
         self.admin_name_combo_box.setGeometry(QtCore.QRect(110, 510, 120, 25))
         self.admin_name_combo_box.setObjectName("admin_name_combo_box")
-        cur.execute('SELECT * FROM admins')
-        admins = cur.fetchall()
+        usr.execute('SELECT * FROM users')
+        admins = usr.fetchall()
         for admin in admins:
-            self.admin_name_combo_box.addItem(admin[0])
+            self.admin_name_combo_box.addItem(f'{admin[2]} {admin[3]}')
         self.confirm_admin_btn = QtWidgets.QPushButton(self.centralwidget)
         self.confirm_admin_btn.setStyleSheet(style)
         self.confirm_admin_btn.setGeometry(QtCore.QRect(240, 510, 100, 25))
@@ -949,7 +961,7 @@ class Ui_Settings_second(object):
             summ = summ + (result[4] * result[3])
             self.admin_positions_list.addItem(f'{result[0]} | {result[1]} | {int(result[3])} - {result[2]}')
         self.label_bar_admin.setText(f'{int(summ)} ₽')
-        discount = int(config_get_value(path, 'discount'))
+        discount = int(config_get_value(path,'Settings', 'discount'))
         discount = summ / 100 * (100-discount)
         self.label_bar_sale.setText(f'{int(discount)} ₽')
 
@@ -1009,7 +1021,7 @@ class Ui_Settings_second(object):
         for result in results:
             summ = summ + result[4]
         self.label_bar_admin.setText(f'{int(summ)} ₽')
-        discount = config_get_value(path, 'discount')
+        discount = config_get_value(path, 'Settings' ,'discount')
         summ_with_discount = int(summ) /100 * (100 - int(discount))
         self.label_bar_sale.setText(f'{int(summ_with_discount)} ₽')
 
@@ -1219,7 +1231,7 @@ class Ui_settings(object):
         self.api_field.setGeometry(QtCore.QRect(200,780, 480,30))
         self.api_field.setStyleSheet('font-size: 13px')
         try:
-            self.api_field.setText(config_get_value(path, 'api'))
+            self.api_field.setText(config_get_value(path,'Settings', 'api'))
         except:
             pass
         
@@ -1358,6 +1370,7 @@ class Ui_settings(object):
 
     def next_window(self):
         settings_window.hide()
+        second_settings_window_class.setupUi(second_settings_window)
         second_settings_window.show()
 
     def to_menu(self):
@@ -1611,14 +1624,17 @@ class Inventory(object):
             self.grid_1.addWidget(object_1, s, 1)
             s = s+1
         self.scrollArea_2.setWidget(self.content_widget_1)
-        self.comboBox = QtWidgets.QComboBox(parent=self.centralwidget)
-        self.comboBox.setGeometry(QtCore.QRect(190, 650, 201, 31))
-        self.comboBox.setObjectName("comboBox")
-        self.comboBox.setStyleSheet(style)
-        usr.execute('SELECT * FROM users')
-        admins = usr.fetchall()
-        for admin in admins:
-            self.comboBox.addItem(f'{admin[2]} {admin[3]}')
+        self.current_admin = QtWidgets.QLabel(parent=self.centralwidget)
+        self.current_admin.setGeometry(QtCore.QRect(190, 650, 201, 31))
+        self.current_admin.setObjectName("current_admin")
+        self.current_admin.setStyleSheet(style)
+        try:
+            active_user = config_get_value(path, 'Active_user', 'user')
+            usr.execute(f'SELECT * FROM users WHERE login = "{active_user}"')
+            result = usr.fetchone()
+            self.current_admin.setText(f'{result[2]} {result[3]}')
+        except:
+            pass
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -1635,7 +1651,7 @@ class Inventory(object):
         self.label_name_admin.setText(_translate("MainWindow", "Имя администратора:"))
 
     def get_result(self):
-        admin_name = self.comboBox.currentText()
+        admin_name = self.current_admin.text()
 
 
         i = 0
@@ -1658,11 +1674,14 @@ class Inventory(object):
 
             at_club = self.grid_1.itemAtPosition(i,1)
             at_club = at_club.widget()
+            in_program_value = in_program.value()
             for item in result:
                 if name == item[2]:
-                    in_program = in_program - int(item[3])
-
-            itog = at_club.value() - in_program.value()
+                    in_program_value = in_program_value - int(item[3])
+            if in_program_value:
+                itog = at_club.value() - in_program_value
+            else:
+                itog = at_club.value() - in_program.value()
             i = i +1
 
             self.to_insrt += f'{name}:   {itog}\n'
@@ -1676,7 +1695,7 @@ class Inventory(object):
         MainWindow.show()
 
     def send_tg(self):          #Отправка в телегу
-        bot = telebot.TeleBot(config_get_value(path, 'api'))
+        bot = telebot.TeleBot(config_get_value(path,'Settings', 'api'))
         self.pushButton_2.setDisabled(True)
         self.send_label.setVisible(True)
         self.pushButton_2.setStyleSheet('background: gray;\ncolor: white;')
@@ -1711,17 +1730,17 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.pushButton.setGeometry(QtCore.QRect(170, 100, 260, 30))
         self.pushButton.setStyleSheet(style)
         self.pushButton.setObjectName("Inventarization")
-        self.pushButton.clicked.connect(self.invent)
+        self.pushButton.clicked.connect(lambda: self.change_window(window_inv, inv))
         self.pushButton_2 = QtWidgets.QPushButton(parent=self.centralwidget_Main)
         self.pushButton_2.setGeometry(QtCore.QRect(170, 170, 260, 30))
         self.pushButton_2.setStyleSheet(style)
         self.pushButton_2.setObjectName("bar_admin")
-        self.pushButton_2.clicked.connect(self.bar_administrator)
+        self.pushButton_2.clicked.connect(lambda: self.change_window(window_bar, bar_wndw) )
         self.pushButton_3 = QtWidgets.QPushButton(parent=self.centralwidget_Main)
         self.pushButton_3.setGeometry(QtCore.QRect(170, 240, 260, 30))
         self.pushButton_3.setStyleSheet(style)
         self.pushButton_3.setObjectName("pushButton_3")
-        self.pushButton_3.clicked.connect(self.history_inv)
+        self.pushButton_3.clicked.connect(lambda: self.change_window(inv_history, inv_hist_ui))
         self.exit_btn = QtWidgets.QPushButton(parent=self.centralwidget_Main)
         self.exit_btn.setGeometry(QtCore.QRect(170, 700, 260, 30))
         self.exit_btn.setStyleSheet(style)
@@ -1743,7 +1762,7 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.settings_btn.setGeometry(QtCore.QRect(170, 630, 260, 30))
         self.settings_btn.setStyleSheet(style)
         self.settings_btn.setObjectName("setting_btn")
-        self.settings_btn.clicked.connect(self.settings)
+        self.settings_btn.clicked.connect(lambda: self.change_window(Password_window, pass_ui))
         
         #####################################
         ##Кнопка добавления нового аккаунта##
@@ -1751,7 +1770,7 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.add_user_btn = QtWidgets.QPushButton(self.centralwidget_Main)
         self.add_user_btn.setGeometry(QtCore.QRect(170, 560, 260, 30))
         self.add_user_btn.setStyleSheet(style)
-        self.add_user_btn.clicked.connect(self.user_settings)
+        self.add_user_btn.clicked.connect(lambda: self.change_window(user_setting_window, user_setting_window_class))
         self.add_user_btn.setText('Добавить аккаунт')
 
 
@@ -1768,28 +1787,15 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.pushButton_3.setText(_translate("MainWindow", "История инвентаризаций"))
         self.exit_btn.setText(_translate("MainWindow", "Выход"))
 
-    def user_settings(self):
-        MainWindow.hide()
-        user_setting_window.show()
+    def change_window(self, window, current_window_ui):
+        if window == Password_window:
+            MainWindow.setDisabled(True)
+            window.show()            
+        else:
+            current_window_ui.setupUi(window)
+            MainWindow.hide()
+            window.show()
 
-    def invent(self):
-        MainWindow.hide()
-        window_inv.show()
-
-    def bar_administrator(self):
-        MainWindow.hide()
-        window_bar.update()
-        window_bar.show()
-        
-    def history_inv(self):
-        MainWindow.hide()
-        inv_history.show()
-
-    def settings(self):
-        Password_window.show()
-        MainWindow.setDisabled(True)
-#        MainWindow.close()
-#        settings_window.show()
 
     def pc_list(self):
         MainWindow.show()
@@ -1808,7 +1814,7 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     center = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
     config_is_first(path)
-    if config_get_value(path, "is_first") == 'False':
+    if config_get_value(path, 'Settings',"is_first") == 'False':
         usr.execute('INSERT INTO users VALUES ("admin", "", "user", "user", "Управляющий")')
         users_db.commit()
         config_not_first(path)
@@ -1894,6 +1900,7 @@ if __name__ == "__main__":
     game_list_window_class.setupUi(game_list_window)
 
     authorize_window.show()
+    
     sys.exit(app.exec())
 
     

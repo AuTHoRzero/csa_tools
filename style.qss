@@ -18,13 +18,15 @@
 #login_field{
     border: 1px solid;
     border-color: rgb(245, 232, 50);
-    border-radius: 15px
+    border-radius: 15px;
+    background-color: rgb(45,45,45)
 }
 
 #password_field{
     border: 1px solid;
     border-color: rgb(245, 232, 50);
-    border-radius: 15px
+    border-radius: 15px;
+    background-color: rgb(45,45,45)
 }
 
 #forgot_password_label{
