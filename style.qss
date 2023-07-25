@@ -3,6 +3,14 @@
     background-image: url(background_.png);
     background-position: center
 }
+
+#centralwidget_Main{
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background-image: url(background_.png);
+    background-position: center
+}
+
 #Authorization{
     border-radius: 15px
 }
