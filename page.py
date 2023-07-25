@@ -1772,7 +1772,15 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.add_user_btn.setStyleSheet(style)
         self.add_user_btn.clicked.connect(lambda: self.change_window(user_setting_window, user_setting_window_class))
         self.add_user_btn.setText('Добавить аккаунт')
-
+        try:
+            user = config_get_value(path, 'Active_user', 'user')
+            usr.execute(f'SELECT * FROM users WHERE login = "{user}"')
+            res = usr.fetchone()
+            if res[4] == 'Администратор':
+                self.add_user_btn.setVisible(False)
+                self.settings_btn.setVisible(False)
+        except:
+            pass
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
