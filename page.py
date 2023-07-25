@@ -475,6 +475,7 @@ class Ui_Authorization_window(object):
         self.password_field.setGeometry(QtCore.QRect(180, 190, 240, 30))
         self.password_field.setObjectName("password_field")
         self.password_field.setEchoMode(QLineEdit.EchoMode.Password)
+        self.password_field.returnPressed.connect(self.authorize)
         self.authorize_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.authorize_label.setGeometry(QtCore.QRect(195, 70, 210, 30))
         font = QtGui.QFont()
@@ -528,6 +529,7 @@ class Ui_Authorization_window(object):
                 try:
                     if all_users[0][1] == password:
                         config_active_user(path, all_users[0][0])
+                        ui.setupUi(MainWindow)
                         MainWindow.show()
                         authorize_window.close()
                     else:
@@ -552,6 +554,7 @@ class Ui_Authorization_window(object):
             try:
                 if all_users[0][1] == password:
                     config_active_user(path, all_users[0][0])
+                    ui.setupUi(MainWindow)
                     MainWindow.show()
                     authorize_window.close()
                 else:
@@ -1762,7 +1765,7 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.settings_btn.setGeometry(QtCore.QRect(170, 630, 260, 30))
         self.settings_btn.setStyleSheet(style)
         self.settings_btn.setObjectName("setting_btn")
-        self.settings_btn.clicked.connect(lambda: self.change_window(Password_window, pass_ui))
+        self.settings_btn.clicked.connect(lambda: self.change_window(settings_window, stngs_wndw))
         
         #####################################
         ##Кнопка добавления нового аккаунта##
@@ -1795,14 +1798,10 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.pushButton_3.setText(_translate("MainWindow", "История инвентаризаций"))
         self.exit_btn.setText(_translate("MainWindow", "Выход"))
 
-    def change_window(self, window, current_window_ui):
-        if window == Password_window:
-            MainWindow.setDisabled(True)
-            window.show()            
-        else:
-            current_window_ui.setupUi(window)
-            MainWindow.hide()
-            window.show()
+    def change_window(self, window, current_window_ui):           
+        current_window_ui.setupUi(window)
+        MainWindow.hide()
+        window.show()
 
 
     def pc_list(self):
