@@ -1708,6 +1708,24 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.centralwidget_Main = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget_Main.setStyleSheet(qstyle)
         self.centralwidget_Main.setObjectName("centralwidget_Main")
+
+        try:
+            self.acc_label = QtWidgets.QLabel(self.centralwidget_Main)
+            self.acc_label.setGeometry(QtCore.QRect(10,10, 180, 20))
+            login = config_get_value(path, 'Active_user', 'user')
+            usr.execute(f'SELECT * FROM users WHERE login = "{login}"')
+            res = usr.fetchone()
+            self.acc_label.setText(f'{res[2]} {res[3]}')
+
+            self.change_acc_btn = QtWidgets.QPushButton(self.centralwidget_Main)
+            self.change_acc_btn.setGeometry(QtCore.QRect(190,10,70,30))
+            self.change_acc_btn.setText("Выйти")
+            self.change_acc_btn.setObjectName('change_acc_btn')
+            self.change_acc_btn.setStyleSheet(qstyle)
+            self.change_acc_btn.clicked.connect(self.change_account)
+        except:
+            pass
+
         self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget_Main)
         self.pushButton.setGeometry(QtCore.QRect(170, 100, 260, 30))
         self.pushButton.setStyleSheet(style)
@@ -1781,6 +1799,10 @@ class Ui_MainWindow(object):                #Основное окно (меню
         current_window_ui.setupUi(window)
         MainWindow.hide()
         window.show()
+
+    def change_account(self):
+        MainWindow.close()
+        authorize_window.show()
 
 
     def pc_list(self):

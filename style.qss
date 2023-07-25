@@ -87,3 +87,22 @@
     color: red;
     background-color: rgb(65,65,65)
 }
+
+#change_acc_btn{
+    color: white;
+    border: 1.5px solid;
+    border-radius: 15px;
+    border-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fffb00, stop: 0.4 #edc100,
+                                 stop: 0.5 #fffb00, stop: 1.0 #edc100)
+}
+
+#change_acc_btn::hover{
+    color: black;
+    border: 1.5px solid;
+    border-radius: 15px;
+    border-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fffb00, stop: 0.4 #edc100,
+                                 stop: 0.5 #fffb00, stop: 1.0 #edc100);
+    background-color: rgb(255,242,50)
+}
