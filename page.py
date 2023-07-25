@@ -16,6 +16,7 @@ from PyQt6 import QtCore, QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLineEdit
 import sys
 from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6.QtGui import QPainterPath
 
 
 
@@ -116,8 +117,13 @@ class Ui_AddUser(object):
         MainWindow.resize(830, 600)
         MainWindow.setStyleSheet(style)
         MainWindow.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        MainWindow.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True )
+        qr = MainWindow.frameGeometry()
+        qr.moveCenter(center)
+        MainWindow.move(qr.topLeft())
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setStyleSheet('#centralwidget{background-image: url(background_.png);\nbackground-position: center}')
 
         #################
         ##Кнопка выхода##
@@ -437,8 +443,11 @@ class Ui_Authorization_window(object):
         Authorization.setFixedSize(600, 400)
         Authorization.setStyleSheet("")
         Authorization.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        Authorization.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True )
         self.centralwidget = QtWidgets.QWidget(parent=Authorization)
-        
+        qr = Authorization.frameGeometry()
+        qr.moveCenter(center)
+        Authorization.move(qr.topLeft())
             
         self.centralwidget.setStyleSheet(qstyle)
         self.centralwidget.setObjectName("centralwidget")
@@ -608,6 +617,9 @@ class Ui_Password(object):
         Password.setObjectName("Password")
         Password.setFixedSize(558, 138)
         Password.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        qr = Password.frameGeometry()
+        qr.moveCenter(center)
+        Password.move(qr.topLeft())
         self.ok_box = QtWidgets.QPushButton(parent=Password)
         self.ok_box.setGeometry(QtCore.QRect(460, 100, 81, 25))
         self.ok_box.setObjectName("ok_box")
@@ -687,6 +699,9 @@ class Ui_Settings_second(object):
         Settings_second.setObjectName("Settings_second")
         Settings_second.setFixedSize(742, 880)
         Settings_second.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
+        qr = Settings_second.frameGeometry()
+        qr.moveCenter(center)
+        Settings_second.move(qr.topLeft())
         self.centralwidget = QtWidgets.QWidget(parent=Settings_second)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget.setStyleSheet(style)
@@ -1019,6 +1034,9 @@ class Ui_settings(object):
         settings.setObjectName("settings")
         settings.setFixedSize(850, 900)
         settings.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
+        qr = settings.frameGeometry()
+        qr.moveCenter(center)
+        settings.move(qr.topLeft())
         self.centralwidget = QtWidgets.QWidget(parent=settings)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget.setStyleSheet(style)
@@ -1353,6 +1371,9 @@ class Ui_Inv_history(object):
         Inv_history.setObjectName("Inv_history")
         Inv_history.setFixedSize(400, 800)
         Inv_history.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
+        qr = Inv_history.frameGeometry()
+        qr.moveCenter(center)
+        Inv_history.move(qr.topLeft())
         self.centralwidget = QtWidgets.QWidget(parent=Inv_history)
         self.centralwidget.setObjectName("centralwidget")
         self.back = QtWidgets.QPushButton(parent=self.centralwidget)
@@ -1393,6 +1414,9 @@ class Ui_Bar(object):
         Bar.setObjectName("Bar")
         Bar.setFixedSize(416, 751)
         Bar.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
+        qr = Bar.frameGeometry()
+        qr.moveCenter(center)
+        Bar.move(qr.topLeft())
         self.centralwidget = QtWidgets.QWidget(parent=Bar)
         self.centralwidget.setObjectName("centralwidget")
         self.centralwidget.setStyleSheet(style)
@@ -1419,10 +1443,10 @@ class Ui_Bar(object):
         self.sended_label.setText('Отправлено')
         self.sended_label.setStyleSheet('color: green')
         self.sended_label.setVisible(False)
-        cur.execute('SELECT * FROM admins')
-        admins = cur.fetchall()
+        usr.execute('SELECT * FROM users')
+        admins = usr.fetchall()
         for admin in admins:
-            self.comboBox.addItem(admin[0])
+            self.comboBox.addItem(f'{admin[2]} {admin[3]}')
         self.scrollArea = QtWidgets.QScrollArea(parent=self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(20, 60, 371, 591))
         self.scrollArea.setWidgetResizable(True)
@@ -1473,13 +1497,16 @@ class Ui_Bar(object):
             name = name.widget().text()
             count = self.grid.itemAtPosition(i, 1)
             count = count.widget().value()
+            
             today = datetime.datetime.now().strftime('%d.%m.%Y %H:%M.%S')
             if count > 0:
                 cur.execute(f'SELECT * FROM positions WHERE name = "{str(name)}"')
                 res = cur.fetchall()
                 cur.execute(f'INSERT INTO admin_bar VALUES("{today}", "{admin_name}", "{name}", "{count}", "{res[0][1]}")')
                 conn.commit()
+            self.grid.itemAtPosition(i,1).widget().clear()
             i = i +1
+        
 
     def end_send(self):
         self.sended_label.setVisible(False)
@@ -1497,6 +1524,9 @@ class Inventory(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
         MainWindow.setFixedSize(616, 797)
+        qr = MainWindow.frameGeometry()
+        qr.moveCenter(center)
+        MainWindow.move(qr.topLeft())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1585,10 +1615,10 @@ class Inventory(object):
         self.comboBox.setGeometry(QtCore.QRect(190, 650, 201, 31))
         self.comboBox.setObjectName("comboBox")
         self.comboBox.setStyleSheet(style)
-        cur.execute('SELECT * FROM admins')
-        admins = cur.fetchall()
+        usr.execute('SELECT * FROM users')
+        admins = usr.fetchall()
         for admin in admins:
-            self.comboBox.addItem(admin[0])
+            self.comboBox.addItem(f'{admin[2]} {admin[3]}')
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -1613,6 +1643,13 @@ class Inventory(object):
         date = f'{today.year}-{today.month}-{today.day}'
         self.to_insrt = f'{today.year}-{today.month}-{today.day}\n\n{admin_name}\n\n'
         to_bd = ''
+
+        #############################
+        ##Не считать взятое админом##
+        #############################
+        cur.execute('SELECT * FROM admin_bar')
+        result = cur.fetchall()
+
         while i < self.grid.rowCount():
             name = self.grid.itemAtPosition(i,0)
             name = name.widget().text()
@@ -1621,6 +1658,9 @@ class Inventory(object):
 
             at_club = self.grid_1.itemAtPosition(i,1)
             at_club = at_club.widget()
+            for item in result:
+                if name == item[2]:
+                    in_program = in_program - int(item[3])
 
             itog = at_club.value() - in_program.value()
             i = i +1
@@ -1649,9 +1689,13 @@ class Inventory(object):
 
 class Ui_MainWindow(object):                #Основное окно (меню)
     def setupUi(self, MainWindow):
+        MainWindow.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
         MainWindow.setFixedSize(600, 800)
+        qr = MainWindow.frameGeometry()
+        qr.moveCenter(center)
+        MainWindow.move(qr.topLeft())
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -1659,9 +1703,8 @@ class Ui_MainWindow(object):                #Основное окно (меню
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         MainWindow.setAutoFillBackground(False)
-        MainWindow.setStyleSheet("QMainWindow{background-image: url(background.png);\nbackground-position: absolute;}")
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
-        self.centralwidget.setStyleSheet("")
+        self.centralwidget.setStyleSheet(qstyle)
         self.centralwidget.setObjectName("centralwidget")
         self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(170, 100, 260, 30))
@@ -1684,9 +1727,6 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.exit_btn.setObjectName("exit_btn")
         self.exit_btn.clicked.connect(self.exit)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
-        self.statusbar.setObjectName("statusbar")
-        MainWindow.setStatusBar(self.statusbar)
 
 #        self.pc_list_btn = QtWidgets.QPushButton(self.centralwidget)
 #        self.pc_list_btn.setText('Обновление игр')
@@ -1765,6 +1805,7 @@ if __name__ == "__main__":
     import sys
     path = 'settings.ini'
     app = QtWidgets.QApplication(sys.argv)
+    center = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
     config_is_first(path)
     if config_get_value(path, "is_first") == 'False':
         usr.execute('INSERT INTO users VALUES ("admin", "", "user", "user", "Управляющий")')
