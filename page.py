@@ -35,6 +35,10 @@ cur.execute('CREATE TABLE IF NOT EXISTS admin_bar(date TEXT, admin TEXT, positio
 cur.execute('CREATE TABLE IF NOT EXISTS admins(name TEXT)')
 cur.execute('CREATE TABLE IF NOT EXISTS positions (name TEXT, price FLOAT)')
 cur.execute('CREATE TABLE IF NOT EXISTS config (parameter TEXT, value TEXT)')
+try:
+    cur.execute('ALTER TABLE positions ADD at_stock INTEGER')
+except:
+    pass
 
 with open('style.css', 'r') as r:
     style = r.read()
@@ -128,6 +132,92 @@ def config_active_user(path, user):
     config.set('Active_user', 'user', user)
     with open(path, "w") as config_file:
         config.write(config_file)
+
+
+class Ui_Stock(object):
+    def setupUi(self, Stock):
+        Stock.setObjectName("Stock")
+        Stock.setFixedSize(520, 820)
+        Stock.setWindowTitle("Склад")
+        Stock.setWindowOpacity(1)
+        Stock.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True )
+        Stock.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        Stock.setStyleSheet(style)
+        qr = Stock.frameGeometry()
+        qr.moveCenter(center)
+        Stock.move(qr.topLeft())
+        self.centralwidget = QtWidgets.QWidget(parent=Stock)
+        self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setStyleSheet('#centralwidget{background-image: url(background_.png);\nbackground-position: center;\nborder-radius: 15px}')
+        self.scrollArea = QtWidgets.QScrollArea(parent=self.centralwidget)
+        self.scrollArea.setGeometry(QtCore.QRect(10, 40, 491, 701))
+        self.scrollArea.setObjectName("scroll_area_stock")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QtWidgets.QWidget()
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 369, 589))
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setStyleSheet('background-color: black;\ncolor: white;')
+        self.grid = QtWidgets.QGridLayout(self.scrollAreaWidgetContents)
+        cur.execute('SELECT * FROM positions')
+        res = cur.fetchall()
+        s = 0
+        for item in res:
+            object_0 = QtWidgets.QLabel(f'{item[0]}')
+            object_0.setStyleSheet('color: white')
+            object_1 = QtWidgets.QSpinBox()
+            object_1.setMaximum(99999)
+            if item[2] != None:
+                object_1.setValue(item[2])
+            object_1.setStyleSheet(style)
+            self.grid.addWidget(object_0, s, 0)
+            self.grid.addWidget(object_1, s, 1)
+            s += 1
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+        self.to_menu_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.to_menu_btn.setGeometry(QtCore.QRect(10, 770, 90, 30))
+        self.to_menu_btn.setObjectName("to_menu_btn")
+        self.to_menu_btn.clicked.connect(self.to_menu)
+        self.confirm_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.confirm_btn.setGeometry(QtCore.QRect(410, 770, 90, 30))
+        self.confirm_btn.setObjectName("confirm_btn")
+        self.confirm_btn.clicked.connect(self.confirm)
+        self.Stock_big_label = QtWidgets.QLabel(parent=self.centralwidget)
+        self.Stock_big_label.setGeometry(QtCore.QRect(10, 0, 171, 31))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        font.setBold(True)
+        self.Stock_big_label.setFont(font)
+        self.Stock_big_label.setObjectName("Stock_big_label")
+        Stock.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(Stock)
+        QtCore.QMetaObject.connectSlotsByName(Stock)
+
+    def retranslateUi(self, Stock):
+        _translate = QtCore.QCoreApplication.translate
+        self.to_menu_btn.setText(_translate("Stock", "Назад"))
+        self.confirm_btn.setText(_translate("Stock", "Применить"))
+        self.Stock_big_label.setText(_translate("Stock", "Склад:"))
+
+    def to_menu(self):
+        Stock_window.close()
+        MainWindow.show()
+
+    def confirm(self):
+        i = 0
+        while i < self.grid.rowCount():
+            name = self.grid.itemAtPosition(i, 0).widget().text()
+            value = self.grid.itemAtPosition(i, 1).widget().value()
+            cur.execute(f'UPDATE positions SET at_stock = {int(value)} WHERE name = "{name}"')
+            conn.commit()
+            i += 1
+        self.confirm_btn.setStyleSheet('background-color: rgb(45,45,45);\ncolor:green')
+        self.confirm_btn.setText('Сохранено')
+        self.confirm_btn.setDisabled(True)
+        QTimer.singleShot(2500, lambda: self.confirm_btn.setText('Применить'))
+        QTimer.singleShot(2500, lambda: self.confirm_btn.setStyleSheet(style))
+        QTimer.singleShot(2500, lambda: self.confirm_btn.setEnabled(True))
+
 
 
 
@@ -1782,6 +1872,13 @@ class Ui_MainWindow(object):                #Основное окно (меню
         except:
             pass
 
+        self.stock_btn = QtWidgets.QPushButton(self.centralwidget_Main)
+        self.stock_btn.setGeometry(QtCore.QRect(170, 310, 260, 30))
+        self.stock_btn.setText('Склад')
+        self.stock_btn.setStyleSheet(style)
+        self.stock_btn.clicked.connect(lambda: self.change_window(Stock_window, stock_ui))
+
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -1829,6 +1926,13 @@ if __name__ == "__main__":
         
 
     bar = Ui_Bar()
+
+    ###############
+    ##Окно склада##
+    ###############
+    Stock_window = QtWidgets.QMainWindow()
+    stock_ui = Ui_Stock()
+
 
     ############################
     ##Окно работы с аккаунтами##
