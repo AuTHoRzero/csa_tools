@@ -1608,7 +1608,7 @@ class Inventory(object):
         MainWindow.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
-        MainWindow.setFixedSize(616, 797)
+        MainWindow.setFixedSize(950, 797)
         qr = MainWindow.frameGeometry()
         qr.moveCenter(center)
         MainWindow.move(qr.topLeft())
@@ -1629,7 +1629,7 @@ class Inventory(object):
         self.pushButton.setStyleSheet(style)
         self.pushButton.clicked.connect(self.go_back)
         self.pushButton_2 = QtWidgets.QPushButton(parent=self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(490, 720, 89, 25))
+        self.pushButton_2.setGeometry(QtCore.QRect(840, 720, 89, 25))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_2.setStyleSheet(style)
         self.pushButton_2.clicked.connect(self.get_result)
@@ -1641,13 +1641,52 @@ class Inventory(object):
         self.in_prog_label.setObjectName("in_prog_label")
         self.at_club_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.at_club_label.setGeometry(QtCore.QRect(340, 20, 131, 41))
+
+        ########################
+        ##Текст в холодильнике##
+        ########################
+        self.at_fridge_label = QtWidgets.QLabel(self.centralwidget)
+        self.at_fridge_label.setGeometry(QtCore.QRect(660, 20, 190, 40))
+        self.at_fridge_label.setText('В холодильнике:')
+        self.at_fridge_label.setFont(font)
+        
+        #############################
+        ##Заполнение в холодильнике##
+        #############################
+        self.at_fridge_scroll = QtWidgets.QScrollArea(self.centralwidget)
+        self.at_fridge_scroll.setGeometry(QtCore.QRect(660,70,250,540))
+        self.at_fridge_scroll.setWidgetResizable(True)
+        self.at_fridge_widget = QtWidgets.QWidget()
+        self.at_fridge_widget.setGeometry(QtCore.QRect(0, 0, 248, 538))
+        self.at_fridge_widget.setStyleSheet("background-color: rgb(45,45,45);\ncolor: white;\nborder-color: rgb(245, 232, 50);")
+        self.grid_fridge = QtWidgets.QGridLayout(self.at_fridge_widget)
+        cur.execute('SELECT * FROM positions')
+        result = cur.fetchall()
+        self.dic = {}
+        s = 0
+        for i in result:
+            self.dic[str(i)] = QtWidgets.QLabel(f'{i[0]}')
+            object_1 = QtWidgets.QSpinBox()
+            object_1.setStyleSheet(style)
+            object_1.setMaximum(99999)
+            self.grid_fridge.addWidget(self.dic[str(i)], s, 0)
+            self.grid_fridge.addWidget(object_1, s, 1)
+            s = s+1
+
+        self.at_fridge_scroll.setWidget(self.at_fridge_widget)
+
+
         font = QtGui.QFont()
         font.setPointSize(18)
         self.at_club_label.setFont(font)
         self.at_club_label.setObjectName("at_club_label")
         self.label_name_admin = QtWidgets.QLabel(parent=self.centralwidget)
-        self.label_name_admin.setGeometry(QtCore.QRect(20, 650, 161, 31))
+        self.label_name_admin.setGeometry(QtCore.QRect(20, 650, 181, 31))
         self.label_name_admin.setObjectName("label_name_admin")
+        font_admin = QtGui.QFont()
+        font_admin.setBold(True)
+        font_admin.setPointSize(12)
+        self.label_name_admin.setFont(font_admin)
         self.scrollArea = QtWidgets.QScrollArea(parent=self.centralwidget)
         self.scrollArea.setGeometry(QtCore.QRect(20, 70, 250, 540))
         self.scrollArea.setWidgetResizable(True)
@@ -1664,7 +1703,7 @@ class Inventory(object):
         s = 0
         for i in result:
             self.dic[str(i)] = QtWidgets.QLabel(f'{i[0]}')
-            object_1 = QtWidgets.QDoubleSpinBox()
+            object_1 = QtWidgets.QSpinBox()
             object_1.setStyleSheet(style)
             object_1.setMaximum(99999)
             self.grid.addWidget(self.dic[str(i)], s, 0)
@@ -1681,15 +1720,16 @@ class Inventory(object):
         self.content_widget_1.setStyleSheet("background-color: rgb(45,45,45);\ncolor: white;")
         self.grid_1 = QtWidgets.QGridLayout(self.content_widget_1)
         self.send_label = QtWidgets.QLabel(self.centralwidget)
-        self.send_label.setGeometry(QtCore.QRect(490,690,90,20))
+        self.send_label.setGeometry(QtCore.QRect(490,840,90,20))
         self.send_label.setStyleSheet('color: green;')
         self.send_label.setObjectName('send_label')
         self.send_label.setVisible(False)
         s = 0
         for i in result:
             object_0 = QtWidgets.QLabel(f'{i[0]}')
-            object_1 = QtWidgets.QDoubleSpinBox()
+            object_1 = QtWidgets.QSpinBox()
             object_0.setStyleSheet(style)
+            object_1.setValue(i[2])
             object_1.setStyleSheet(style)
             object_1.setMaximum(99999)
             self.grid_1.addWidget(object_0, s, 0)
@@ -1697,9 +1737,11 @@ class Inventory(object):
             s = s+1
         self.scrollArea_2.setWidget(self.content_widget_1)
         self.current_admin = QtWidgets.QLabel(parent=self.centralwidget)
-        self.current_admin.setGeometry(QtCore.QRect(190, 650, 201, 31))
+        self.current_admin.setGeometry(QtCore.QRect(210, 650, 201, 31))
         self.current_admin.setObjectName("current_admin")
-        self.current_admin.setStyleSheet(style)
+        font_admin.setUnderline(True)
+        self.current_admin.setFont(font_admin)
+        self.current_admin.setStyleSheet('color: rgb(245, 232, 50);')
         try:
             active_user = config_get_value(path, 'Active_user', 'user')
             usr.execute(f'SELECT * FROM users WHERE login = "{active_user}"')
@@ -1718,8 +1760,8 @@ class Inventory(object):
         self.send_label.setText(_translate('MainWindow', "Отправлено"))
         self.pushButton.setText(_translate("MainWindow", "Назад"))
         self.pushButton_2.setText(_translate("MainWindow", "Отправить"))
-        self.in_prog_label.setText(_translate("MainWindow", "В проге"))
-        self.at_club_label.setText(_translate("MainWindow", "На складе"))
+        self.in_prog_label.setText(_translate("MainWindow", "В проге:"))
+        self.at_club_label.setText(_translate("MainWindow", "На складе:"))
         self.label_name_admin.setText(_translate("MainWindow", "Имя администратора:"))
 
     def get_result(self):
@@ -1744,6 +1786,8 @@ class Inventory(object):
             in_program = self.grid.itemAtPosition(i,1)
             in_program = in_program.widget()
 
+            at_stock = self.grid.itemAtPosition(i,1).widget().value()
+
             at_club = self.grid_1.itemAtPosition(i,1)
             at_club = at_club.widget()
             in_program_value = in_program.value()
@@ -1751,9 +1795,9 @@ class Inventory(object):
                 if name == item[2]:
                     in_program_value = in_program_value - int(item[3])
             if in_program_value:
-                itog = at_club.value() - in_program_value
+                itog = at_club.value() + at_stock - in_program_value
             else:
-                itog = at_club.value() - in_program.value()
+                itog = at_club.value() + at_stock - in_program.value()
             i = i +1
 
             self.to_insrt += f'{name}:   {itog}\n'
