@@ -571,7 +571,6 @@ class Ui_Authorization_window(object):
         self.login_field = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.login_field.setGeometry(QtCore.QRect(180, 130, 240, 30))
         self.login_field.setObjectName("login_field")
-        self.login_field.setStyleSheet('color:white')
         self.login_field.setStyleSheet('background-color: rgb(45,45,45);\ncolor: white')
         self.password_field = QtWidgets.QLineEdit(parent=self.centralwidget)
         self.password_field.setGeometry(QtCore.QRect(180, 190, 240, 30))
@@ -581,6 +580,7 @@ class Ui_Authorization_window(object):
         self.password_field.setStyleSheet('background-color: rgb(45,45,45);\ncolor: white')
         self.authorize_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.authorize_label.setGeometry(QtCore.QRect(195, 70, 210, 30))
+        self.authorize_label.setStyleSheet('color:white')
         font = QtGui.QFont()
         font.setPointSize(24)
         font.setBold(True)
@@ -1828,6 +1828,66 @@ class Inventory(object):
         self.pushButton_2.setStyleSheet('style')
         self.pushButton_2.setDisabled(False)
 
+
+class Ui_Choose_promo(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("MainWindow")
+        MainWindow.setFixedSize(350, 242)
+        qr = MainWindow.frameGeometry()
+        qr.moveCenter(center)
+        MainWindow.move(qr.topLeft())
+        MainWindow.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        MainWindow.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True )
+        self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setStyleSheet(qstyle)
+        self.bonus_night = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.bonus_night.setGeometry(QtCore.QRect(40, 30, 270, 30))
+        self.bonus_night.setStyleSheet("border-radius: 15px;\n"
+"border: 1.5px solid black;\n"
+"color: black;\n"
+"background-color: rgb(245,232,50)")
+        self.bonus_night.setObjectName("bonus_night")
+        self.five_new_users = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.five_new_users.setGeometry(QtCore.QRect(40, 80, 270, 30))
+        self.five_new_users.setStyleSheet("border-radius: 15px;\n"
+"border: 1.5px solid black;\n"
+"color: black;\n"
+"background-color: rgb(245,232,50)")
+        self.five_new_users.setObjectName("five_new_users")
+        self.abonements = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.abonements.setGeometry(QtCore.QRect(40, 130, 270, 30))
+        self.abonements.setStyleSheet("border-radius: 15px;\n"
+"border: 1.5px solid black;\n"
+"color: black;\n"
+"background-color: rgb(245,232,50)")
+        self.abonements.setObjectName("abonements")
+        self.back_to_menu_btn = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.back_to_menu_btn.setGeometry(QtCore.QRect(40, 180, 270, 30))
+        self.back_to_menu_btn.setStyleSheet("border-radius: 15px;\n"
+"border: 1.5px solid black;\n"
+"color: black;\n"
+"background-color: rgb(245,232,50)")
+        self.back_to_menu_btn.setObjectName("back_to_menu_btn")
+        self.back_to_menu_btn.clicked.connect(self.back_to_menu)
+        MainWindow.setCentralWidget(self.centralwidget)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.bonus_night.setText(_translate("MainWindow", "6-я ночь в подарок"))
+        self.five_new_users.setText(_translate("MainWindow", "5 новых пользователей"))
+        self.abonements.setText(_translate("MainWindow", "Абонементы"))
+        self.back_to_menu_btn.setText(_translate("MainWindow", "В меню"))
+
+    def back_to_menu(self):
+        promo_window.close()
+        MainWindow.show()
+
+
 class Ui_MainWindow(object):                #Основное окно (меню)
     def setupUi(self, MainWindow):
         MainWindow.setWindowIcon(QtGui.QIcon("icon/colizeum_logo.ico"))
@@ -1909,6 +1969,15 @@ class Ui_MainWindow(object):                #Основное окно (меню
         self.settings_btn.setStyleSheet(style)
         self.settings_btn.setObjectName("setting_btn")
         self.settings_btn.clicked.connect(lambda: self.change_window(settings_window, stngs_wndw))
+
+        ###########################
+        ##Кнопка работы с акциями##
+        ###########################
+        self.promo_btn = QtWidgets.QPushButton(self.centralwidget_Main)
+        self.promo_btn.setGeometry(QtCore.QRect(170, 380, 260, 30))
+        self.promo_btn.setText('Акции')
+        self.promo_btn.setStyleSheet(style)
+        self.promo_btn.clicked.connect(lambda: self.change_window(promo_window, promo_ui))
         
         #####################################
         ##Кнопка добавления нового аккаунта##
@@ -1988,6 +2057,12 @@ if __name__ == "__main__":
     ###############
     Stock_window = QtWidgets.QMainWindow()
     stock_ui = Ui_Stock()
+
+    ###############
+    ##Выбор акции##
+    ###############
+    promo_window = QtWidgets.QMainWindow()
+    promo_ui = Ui_Choose_promo()
 
 
     ############################
