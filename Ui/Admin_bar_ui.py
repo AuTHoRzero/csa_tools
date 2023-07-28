@@ -8,6 +8,11 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 
+with open('style.css', 'r') as file:
+    style = file.read()
+
+with open('style.qss', 'r') as file:
+    qstyle = file.read()
 
 class Ui_Bar(object):
     def setupUi(self, Bar):
@@ -17,8 +22,12 @@ class Ui_Bar(object):
         qr = Bar.frameGeometry()
         qr.moveCenter(center)
         Bar.move(qr.topLeft())
+        Bar.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        Bar.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True )
+        Bar.setStyleSheet(style)
         self.centralwidget = QtWidgets.QWidget(parent=Bar)
         self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setStyleSheet(qstyle)
         self.send = QtWidgets.QPushButton(parent=self.centralwidget)
         self.send.setGeometry(QtCore.QRect(290, 700, 89, 25))
         self.send.setObjectName("send")
