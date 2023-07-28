@@ -4,3 +4,6 @@ settings.ini
 test.py
 users.db
 /charts
+__pycache__
+page.py
+promotion.db
