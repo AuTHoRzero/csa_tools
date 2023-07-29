@@ -188,8 +188,9 @@ class Authorize(QMainWindow):
                 try:
                     if all_users[0][1] == password:
                         config_active_user(path, all_users[0][0])
-                        self.close()
                         main_window.show()
+                        self.close()
+                        
                     else:
                         self.ui.etner_btn.setText("Неверный пароль")
                         self.ui.etner_btn.setObjectName('error_enter_btn')
@@ -212,8 +213,9 @@ class Authorize(QMainWindow):
             try:
                 if all_users[0][1] == password:
                     config_active_user(path, all_users[0][0])
-                    self.close()
                     main_window.show()
+                    self.close()
+                    
                 else:
                     self.ui.etner_btn.setText("Неверный пароль")
                     self.ui.etner_btn.setObjectName('error_enter_btn')
@@ -290,12 +292,14 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
 
 
     def change_account(self):
-        self.close()
         authorize_window.show()
+        self.close()
+        
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
     def exit_from(self):
         self.close()
@@ -376,8 +380,9 @@ class Admin_bar(QMainWindow, Ui_Bar):
 
 
     def to_menu(self):
-        self.close()
         main_window.show()
+        self.close()
+        
 
 
 class Invent(QMainWindow, Inventory):
@@ -523,8 +528,9 @@ class Invent(QMainWindow, Inventory):
         self.pushButton_2.setDisabled(False)
 
     def to_menu(self):
-        self.close()
         main_window.show()
+        self.close()
+        
 
 
 
@@ -541,8 +547,9 @@ class History_inv(QMainWindow, Ui_Inv_history):
         self.back.clicked.connect(self.to_menu)
 
     def to_menu(self):
-        self.close()
         main_window.show()
+        self.close()
+        
 
 
 
@@ -567,8 +574,9 @@ class Manager_menu(QMainWindow, Ui_Manager_menu):
 
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
 
 
@@ -699,8 +707,9 @@ class Settings(QMainWindow, Ui_settings):
         add_api(path, key)
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
 
 class Settings_Second(QMainWindow, Ui_Settings_second):
@@ -830,8 +839,9 @@ class Settings_Second(QMainWindow, Ui_Settings_second):
 
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
 
 
@@ -975,8 +985,9 @@ class Add_User(QMainWindow, Ui_AddUser):
 
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
 
 class Stock(QMainWindow, Ui_Stock):
@@ -1001,8 +1012,9 @@ class Stock(QMainWindow, Ui_Stock):
             s += 1
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
     def confirm(self):
         i = 0
@@ -1047,8 +1059,9 @@ class Select_promo(QMainWindow, Ui_Choose_promo):
 
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
 
 class Six_nights(QMainWindow, Ui_six_night):
@@ -1173,8 +1186,9 @@ class Six_nights(QMainWindow, Ui_six_night):
 
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
 
 class Five_Users(QMainWindow, Ui_five_users):
@@ -1299,8 +1313,9 @@ class Five_Users(QMainWindow, Ui_five_users):
 
 
     def change_window(self, window):
-        self.close()
         window.show()
+        self.close()
+        
 
         
 class Abonements(QMainWindow, Ui_Abonements):
@@ -1387,8 +1402,9 @@ class Abonements(QMainWindow, Ui_Abonements):
 
 
     def go_back(self):
-        self.close()
         choose_promo_window.show()
+        self.close()
+        
 
 
 
