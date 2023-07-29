@@ -70,6 +70,7 @@ class Ui_Main_Menu(object):
         font.setUnderline(True)
         self.current_account.setFont(font)
         self.current_account.setObjectName("current_account")
+        self.current_account.setStyleSheet('color: white')
         self.change_acc_btn = QtWidgets.QPushButton(parent=self.centralwidget)
         self.change_acc_btn.setGeometry(QtCore.QRect(10, 50, 141, 31))
         self.change_acc_btn.setObjectName("change_acc_btn")
