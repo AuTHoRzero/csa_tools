@@ -62,6 +62,7 @@ class Inventory(object):
         self.at_fridge_label.setGeometry(QtCore.QRect(660, 20, 190, 40))
         self.at_fridge_label.setText('В холодильнике:')
         self.at_fridge_label.setFont(font)
+        self.at_fridge_label.setStyleSheet('color: white')
         
         #############################
         ##Заполнение в холодильнике##
