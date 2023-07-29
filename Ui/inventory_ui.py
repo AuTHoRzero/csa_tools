@@ -8,7 +8,8 @@ from PyQt6.QtGui import QPainterPath
 
 with open('style.css', 'r') as file:
     style = file.read()
-
+with open('style.qss', 'r') as file:
+    qstyle = file.read()
 
 
 class Inventory(object):
@@ -17,6 +18,8 @@ class Inventory(object):
         MainWindow.setObjectName("MainWindow")
         MainWindow.setEnabled(True)
         MainWindow.setFixedSize(950, 797)
+        MainWindow.setWindowFlag(QtCore.Qt.WindowType.FramelessWindowHint)
+        MainWindow.setAttribute(QtCore.Qt.WidgetAttribute.WA_TranslucentBackground, True )
         center = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
         qr = MainWindow.frameGeometry()
         qr.moveCenter(center)
@@ -32,6 +35,7 @@ class Inventory(object):
         self.centralwidget = QtWidgets.QWidget(parent=MainWindow)
         self.centralwidget.setStyleSheet(style)
         self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setStyleSheet(qstyle)
         self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(20, 720, 89, 25))
         self.pushButton.setObjectName("pushButton")

@@ -276,6 +276,19 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
         self.promo_btn.clicked.connect(lambda: self.change_window(choose_promo_window))
         self.ex.clicked.connect(self.exit_from)
     
+
+    def mousePressEvent(self, event):
+        self.oldPosition = event.globalPosition().toPoint()
+
+    def mouseMoveEvent(self, event):
+        self.move(self.pos() + event.globalPosition().toPoint() - self.oldPosition)
+        self.oldPosition = event.globalPosition().toPoint()
+        event.accept()
+
+
+
+
+
     def change_account(self):
         self.close()
         authorize_window.show()
@@ -439,6 +452,14 @@ class Invent(QMainWindow, Inventory):
         self.scrollArea_2.setWidget(self.content_widget_1)
 
         self.pushButton_2.clicked.connect(self.get_result)
+
+    def mousePressEvent(self, event):
+        self.oldPosition = event.globalPosition().toPoint()
+
+    def mouseMoveEvent(self, event):
+        self.move(self.pos() + event.globalPosition().toPoint() - self.oldPosition)
+        self.oldPosition = event.globalPosition().toPoint()
+        event.accept()
 
 
     def showEvent(self, event):

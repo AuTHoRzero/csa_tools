@@ -5,8 +5,7 @@
 }
 
 #centralwidget_Main{
-    border-bottom-right-radius: 15px;
-    border-bottom-left-radius: 15px;
+    border-radius: 30px;
     background-image: url(background_.png);
     background-position: center
 }
