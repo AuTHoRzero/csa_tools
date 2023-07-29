@@ -40,7 +40,7 @@ class Ui_Bar(object):
         self.scrollArea.setObjectName("scrollArea")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
         self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 389, 599))
-        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents_admin")
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.comboBox = QtWidgets.QComboBox(parent=self.centralwidget)
         self.comboBox.setGeometry(QtCore.QRect(120, 30, 280, 25))

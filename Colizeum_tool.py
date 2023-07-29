@@ -260,6 +260,10 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
         user = usr.fetchone()
         try:
             self.current_account.setText(f'{user[2]} {user[3]}')
+            if user[4] == "Управляющий" or user[4] == 'Старший администратор':
+                pass
+            else:
+                self.manager_menu.setVisible(False)
         except:
             pass
         self.change_acc_btn.clicked.connect(self.change_account)

@@ -106,3 +106,15 @@
                                  stop: 0.5 #fffb00, stop: 1.0 #edc100);
     background-color: rgb(255,242,50)
 }
+
+#scrollAreaWidgetContents_admin{
+    background: transparent;
+    color: white
+}
+
+#scrollArea{
+    background: transparent;
+    color: white;
+    border: 1px solid;
+    border-color: rgb(255,242,50)
+}
