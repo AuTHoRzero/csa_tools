@@ -25,7 +25,8 @@ from Ui.add_user_ui import Ui_AddUser
 from Ui.stock_ui import Ui_Stock
 from Ui.choose_promo_ui import Ui_Choose_promo
 from Ui.five_night_ui import Ui_six_night
-
+from Ui.five_users_ui import Ui_five_users
+from Ui.abonements_ui import Ui_Abonements
 
 ############
 ##Database##
@@ -43,9 +44,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS positions (name TEXT, price FLOAT)')
 cur.execute('CREATE TABLE IF NOT EXISTS config (parameter TEXT, value TEXT)')
 promo_db = sqlite3.connect('promotion.db')
 cur_promo = promo_db.cursor()
-cur_promo.execute('CREATE TABLE IF NOT EXISTS users (number TEXT, nights INTEGER, friends INTEGER)')
-cur_promo.execute('CREATE TABLE IF NOT EXISTS abonement_one (number TEXT, abonement TEXT, packs INTEGER)')
-cur_promo.execute('CREATE TABLE IF NOT EXISTS abonement_two (number TEXT, abonement TEXT, packs INTEGER)')
+cur_promo.execute('CREATE TABLE IF NOT EXISTS users (number TEXT, nights INTEGER, friends INTEGER, ab_1 INTEGER, ab_1_date TEXT, ab_1_value INTEGER, ab_2 INTEGER, ab_2_date TEXT, ab_2_value INTEGER)')
 
 try:
     cur.execute('ALTER TABLE positions ADD at_stock INTEGER')
@@ -159,6 +158,13 @@ class Authorize(QMainWindow):
         self.ui.close_btn.clicked.connect(self.exit)
         self.ui.password_field.returnPressed.connect(self.authorize)
         self.ui.etner_btn.clicked.connect(self.authorize)
+        opacity = [0.05,0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1]
+        self.setDisabled(True)
+        for i in opacity:
+            self.setWindowOpacity(i)
+            app.processEvents()
+            time.sleep(0.09)
+        self.setDisabled(False)
     def exit(self):
         self.close()
 
@@ -230,6 +236,7 @@ class Authorize(QMainWindow):
         qr = self.frameGeometry()
         qr.moveCenter(center)
         self.move(qr.topLeft())
+       
 
     def mousePressEvent(self, event):
         self.oldPosition = event.globalPosition().toPoint()
@@ -256,6 +263,7 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
         self.manager_menu.clicked.connect(lambda: self.change_window(manager_menu_window))
         self.stock_btn.clicked.connect(lambda: self.change_window(stock_window))
         self.promo_btn.clicked.connect(lambda: self.change_window(choose_promo_window))
+        self.ex.clicked.connect(self.exit_from)
     
     def change_account(self):
         self.close()
@@ -264,6 +272,9 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
     def change_window(self, window):
         self.close()
         window.show()
+
+    def exit_from(self):
+        self.close()
 
 class Admin_bar(QMainWindow, Ui_Bar):
     def __init__(self):
@@ -991,6 +1002,8 @@ class Select_promo(QMainWindow, Ui_Choose_promo):
         self.setupUi(self)
         self.back_to_menu_btn.clicked.connect(lambda: self.change_window(main_window))
         self.bonus_night.clicked.connect(lambda: self.change_window(six_nights_window))
+        self.five_new_users.clicked.connect(lambda: self.change_window(five_friends_window))
+        self.abonements.clicked.connect(lambda: self.change_window(abonements_window))
 
     def mousePressEvent(self, event):
         self.oldPosition = event.globalPosition().toPoint()
@@ -1069,7 +1082,7 @@ class Six_nights(QMainWindow, Ui_six_night):
             cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
             result = cur_promo.fetchone()
             if result == None:
-                cur_promo.execute(f'INSERT INTO users VALUES("{text}", "0", "0")')
+                cur_promo.execute(f'INSERT INTO users VALUES("{text}", "0", "0", "0", "0", "0", "0", "0", "0")')
                 promo_db.commit()
                 self.update_label_and_set_visible()
             else:
@@ -1132,6 +1145,218 @@ class Six_nights(QMainWindow, Ui_six_night):
         window.show()
 
 
+class Five_Users(QMainWindow, Ui_five_users):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.pushButton_2.clicked.connect(lambda: self.change_window(choose_promo_window))
+        self.comboBox.lineEdit().textChanged.connect(self.format_phone_number)
+        self.comboBox.lineEdit().returnPressed.connect(self.find_or_add_user)
+        self.nights_label.setVisible(False)
+        self.nights_value_label.setVisible(False)
+        self.pushButton.setVisible(False)
+        try:
+            cur_promo.execute('SELECT * FROM users')
+            users = cur_promo.fetchall()
+            for user in users:
+                self.comboBox.addItem(user[0])
+        except:
+            pass
+        self.comboBox.setCurrentText('')
+        self.pushButton.clicked.connect(self.add_night)
+
+
+    def format_phone_number(self):
+        
+        text = self.comboBox.currentText()
+        if len(text) < 12:
+            self.nights_label.setVisible(False)
+            self.nights_value_label.setVisible(False)
+            self.pushButton.setVisible(False)
+
+
+        try:
+            cur_promo.execute(f'SELECT * FROM users WHERE number LIKE "{text}%"')
+            users = cur_promo.fetchall()
+            for user in users:
+                self.comboBox.addItem(user[0])
+        except Exception as ext:
+            pass
+        try:
+            for letter in text:
+                if letter == '+':
+                    pass
+                elif letter.isdigit() == False:
+                    text = text[:-1]
+            if text[0] == '+':
+                pass
+            if text[0] != '+' and text[1] != '7':
+                self.comboBox.clear()
+                text = '+7'+text
+            if len(text) > 12:
+                text = text[:-1]
+        except Exception as ext:
+            pass
+        self.comboBox.setEditText(text)
+
+    def find_or_add_user(self):
+        text = self.comboBox.currentText()
+        if len(text) < 12:
+            print('Text less than 12 charcters')
+            pass
+        else:
+            cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
+            result = cur_promo.fetchone()
+            if result == None:
+                cur_promo.execute(f'INSERT INTO users VALUES("{text}", "0", "0", "0", "0", "0", "0", "0", "0")')
+                promo_db.commit()
+                self.update_label_and_set_visible()
+            else:
+                self.update_label_and_set_visible()
+                
+    def update_label_and_set_visible(self):
+        text = self.comboBox.currentText()
+        cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
+        user = cur_promo.fetchone()
+        try:
+            if user[2] < 5:
+                self.nights_value_label.setText(f'{user[2]}')
+                self.nights_label.setVisible(True)
+                self.nights_value_label.setVisible(True)
+                self.pushButton.setVisible(True)
+            else:
+                self.nights_value_label.setText(f'{user[2]}')
+                self.nights_label.setVisible(True)
+                self.nights_value_label.setVisible(True)
+                self.pushButton.setVisible(True)
+                self.pushButton.setText('Использовать')
+                self.pushButton.setStyleSheet("background-color: green;\ncolor:black")
+        except:
+            pass
+        
+    
+    def add_night(self):
+        text = self.comboBox.currentText()
+        cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
+        user = cur_promo.fetchone()
+        night = user[2]
+        if (night == 5) and (self.pushButton.text() == "Использовать"):
+            cur_promo.execute(f'UPDATE users SET friends = 0 WHERE number = "{text}"')
+            promo_db.commit()
+            self.pushButton.setText('Добавить')
+            self.pushButton.setStyleSheet(style)
+            self.update_label_and_set_visible()
+
+        elif night == 5:
+            pass
+        else:
+            night+=1
+            cur_promo.execute(f'UPDATE users SET friends = "{night}" WHERE number = "{text}"')
+            promo_db.commit()
+            self.update_label_and_set_visible()
+
+
+    def mousePressEvent(self, event):
+        self.oldPosition = event.globalPosition().toPoint()
+
+    def mouseMoveEvent(self, event):
+        self.move(self.pos() + event.globalPosition().toPoint() - self.oldPosition)
+        self.oldPosition = event.globalPosition().toPoint()
+        event.accept()
+
+
+
+    def change_window(self, window):
+        self.close()
+        window.show()
+
+        
+class Abonements(QMainWindow, Ui_Abonements):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.back_btn.clicked.connect(self.go_back)
+        self.comboBox.lineEdit().textEdited.connect(self.format_phone_number)
+        self.comboBox.lineEdit().returnPressed.connect(self.check_and_update_data)
+
+
+    def show_all(self):
+        self.three_hour_big_label.setVisible(True)
+        self.three_minus_btn.setVisible(True)
+        self.three_past_label.setVisible(True)
+        self.three_past_value_label.setVisible(True)
+        self.three_status_label.setVisible(True)
+        self.three_value_label.setVisible(True)
+        self.sold_three_btn.setVisible(True)
+        self.five_hour_big_label.setVisible(True)
+        self.five_minus_btn.setVisible(True)
+        self.five_past_label.setVisible(True)
+        self.five_past_value_label.setVisible(True)
+        self.five_sold_btn.setVisible(True)
+        self.five_status_label.setVisible(True)
+        self.five_status_value_label.setVisible(True)
+
+    def hide_all(self):
+        self.three_hour_big_label.setVisible(False)
+        self.three_minus_btn.setVisible(False)
+        self.three_past_label.setVisible(False)
+        self.three_past_value_label.setVisible(False)
+        self.three_status_label.setVisible(False)
+        self.three_value_label.setVisible(False)
+        self.sold_three_btn.setVisible(False)
+
+        self.five_hour_big_label.setVisible(False)
+        self.five_minus_btn.setVisible(False)
+        self.five_past_label.setVisible(False)
+        self.five_past_value_label.setVisible(False)
+        self.five_sold_btn.setVisible(False)
+        self.five_status_label.setVisible(False)
+        self.five_status_value_label.setVisible(False)
+
+
+    def format_phone_number(self):
+        
+        text = self.comboBox.currentText()
+        if len(text) < 12:
+            self.hide_all()
+
+
+        try:
+            cur_promo.execute(f'SELECT * FROM users WHERE number LIKE "{text}%"')
+            users = cur_promo.fetchall()
+            for user in users:
+                self.comboBox.addItem(user[0])
+        except Exception as ext:
+            pass
+        try:
+            for letter in text:
+                if letter == '+':
+                    pass
+                elif letter.isdigit() == False:
+                    text = text[:-1]
+            if text[0] == '+':
+                pass
+            if text[0] != '+' and text[1] != '7':
+                self.comboBox.clear()
+                text = '+7'+text
+            if len(text) > 12:
+                text = text[:-1]
+        except Exception as ext:
+            pass
+        self.comboBox.setEditText(text)
+
+
+
+    def check_and_update_data(self):
+        text = self.comboBox.currentText()
+        cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
+        user = cur_promo.fetchone()
+
+
+
+    def go_back(self):
+        self.close()
+        choose_promo_window.show()
 
 
 
@@ -1152,6 +1377,7 @@ if __name__ == '__main__':
     stock_window = Stock()
     choose_promo_window = Select_promo()
     six_nights_window = Six_nights()
-
+    five_friends_window = Five_Users()
+    abonements_window = Abonements()
     
     sys.exit(app.exec())
