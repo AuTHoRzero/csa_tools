@@ -252,10 +252,16 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+    def showEvent(self, event):
+        self.setupUi(self)
         username = config_get_value(path, 'Active_user', 'user')
         usr.execute(f'SELECT * FROM users WHERE login = "{username}"')
         user = usr.fetchone()
-        self.current_account.setText(f'{user[2]} {user[3]}')
+        try:
+            self.current_account.setText(f'{user[2]} {user[3]}')
+        except:
+            pass
         self.change_acc_btn.clicked.connect(self.change_account)
         self.admin_bar_btn.clicked.connect(lambda: self.change_window(admin_bar_window))
         self.inventory_btn.clicked.connect(lambda: self.change_window(inventory_window))
@@ -1364,6 +1370,12 @@ class Abonements(QMainWindow, Ui_Abonements):
 if __name__ == '__main__':
     path = 'settings.ini'
     app = QApplication(sys.argv)
+    config_active_user(path, 'no_user')
+    config_is_first(path)
+    if config_get_value(path, 'Settings',"is_first") == 'False':
+        usr.execute('INSERT INTO users VALUES ("admin", "", "user", "user", "Управляющий")')
+        users_db.commit()
+        config_not_first(path)
 
     authorize_window = Authorize()
     main_window = Main_Menu()
