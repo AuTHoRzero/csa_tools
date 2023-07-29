@@ -163,8 +163,9 @@ class Authorize(QMainWindow):
         for i in opacity:
             self.setWindowOpacity(i)
             app.processEvents()
-            time.sleep(0.09)
+            time.sleep(0.05)
         self.setDisabled(False)
+        self.ui.login_field.setFocus()
     def exit(self):
         self.close()
 
