@@ -46,12 +46,14 @@ class Inventory(object):
         self.pushButton_2.setStyleSheet(style)
         self.in_prog_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.in_prog_label.setGeometry(QtCore.QRect(20, 30, 101, 31))
+        self.in_prog_label.setStyleSheet('color:white')
         font = QtGui.QFont()
         font.setPointSize(18)
         self.in_prog_label.setFont(font)
         self.in_prog_label.setObjectName("in_prog_label")
         self.at_club_label = QtWidgets.QLabel(parent=self.centralwidget)
         self.at_club_label.setGeometry(QtCore.QRect(340, 20, 131, 41))
+        self.at_club_label.setStyleSheet('color:white')
 
         ########################
         ##Текст в холодильнике##
@@ -75,9 +77,11 @@ class Inventory(object):
         font.setPointSize(18)
         self.at_club_label.setFont(font)
         self.at_club_label.setObjectName("at_club_label")
+        self.at_club_label.setStyleSheet('color:white')
         self.label_name_admin = QtWidgets.QLabel(parent=self.centralwidget)
         self.label_name_admin.setGeometry(QtCore.QRect(20, 650, 181, 31))
         self.label_name_admin.setObjectName("label_name_admin")
+        self.label_name_admin.setStyleSheet('color: white')
         font_admin = QtGui.QFont()
         font_admin.setBold(True)
         font_admin.setPointSize(12)
