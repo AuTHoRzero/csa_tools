@@ -1,13 +1,17 @@
 #centralwidget{
     border-radius: 40px;
     background-image: url(background_.png);
-    background-position: center
+    background-position: center;
+    border: 1px solid;
+    border-color: rgb(245,232,50)
 }
 
 #centralwidget_Main{
     border-radius: 30px;
     background-image: url(background_.png);
-    background-position: center
+    background-position: center;
+    border: 1px solid;
+    border-color: rgb(245,232,50)
 }
 
 #Authorization{
