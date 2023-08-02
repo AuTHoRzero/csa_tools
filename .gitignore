@@ -7,3 +7,5 @@ users.db
 __pycache__
 page.py
 promotion.db
+.vscode
+TODO
