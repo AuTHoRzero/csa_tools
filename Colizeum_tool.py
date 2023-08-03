@@ -175,7 +175,7 @@ class Authorize(QMainWindow):
         for i in opacity:
             self.setWindowOpacity(i)
             app.processEvents()
-            time.sleep(0.05)
+            time.sleep(0.02)
         self.setDisabled(False)
         self.ui.login_field.setFocus()
 
@@ -201,6 +201,9 @@ class Authorize(QMainWindow):
                 try:
                     if all_users[0][1] == password:
                         config_active_user(path, all_users[0][0])
+                        self.ui.login_field.clear()
+                        self.ui.password_field.clear()
+                        self.ui.login_field.setFocus()
                         main_window.show()
                         self.close()
 
@@ -227,6 +230,9 @@ class Authorize(QMainWindow):
             try:
                 if all_users[0][1] == password:
                     config_active_user(path, all_users[0][0])
+                    self.ui.login_field.clear()
+                    self.ui.password_field.clear()
+                    self.ui.login_field.setFocus()
                     main_window.show()
                     self.close()
 
@@ -492,9 +498,6 @@ class Invent(QMainWindow, Inventory):
         self.to_insrt = f'{today.year}-{today.month}-{today.day}\n\n{admin_name}\n\n'
         to_bd = ''
 
-        #############################
-        ## Не считать взятое админом##
-        #############################
         cur.execute('SELECT * FROM admin_bar')
         result = cur.fetchall()
 
@@ -504,18 +507,18 @@ class Invent(QMainWindow, Inventory):
             in_program = self.grid.itemAtPosition(i, 1)
             in_program = in_program.widget()
 
-            at_stock = self.grid.itemAtPosition(i, 1).widget().value()
+            at_stock = self.grid_1.itemAtPosition(i, 1).widget().value()
 
-            at_club = self.grid_1.itemAtPosition(i, 1)
+            at_club = self.grid_fridge.itemAtPosition(i, 1)
             at_club = at_club.widget()
             in_program_value = in_program.value()
             for item in result:
                 if name == item[2]:
                     in_program_value = in_program_value - int(item[3])
             if in_program_value:
-                itog = at_club.value() + at_stock - in_program_value
+                itog = (at_club.value() + at_stock) - in_program_value
             else:
-                itog = at_club.value() + at_stock - in_program.value()
+                itog = (at_club.value() + at_stock) - in_program_value
             i = i + 1
 
             self.to_insrt += f'{name}:   {itog}\n'
@@ -1009,6 +1012,28 @@ class Stock(QMainWindow, Ui_Stock):
         self.to_menu_btn.clicked.connect(
             lambda: self.change_window(main_window))
         self.confirm_btn.clicked.connect(self.confirm)
+        cur.execute('SELECT * FROM positions')
+        res = cur.fetchall()
+        s = 0
+        for item in res:
+            object_0 = QtWidgets.QLabel(f'{item[0]}')
+            object_0.setStyleSheet('color: white')
+            object_1 = QtWidgets.QSpinBox()
+            object_1.setMaximum(99999)
+            if item[2] != None:
+                object_1.setValue(item[2])
+            object_1.setStyleSheet(style)
+            self.grid.addWidget(object_0, s, 0)
+            self.grid.addWidget(object_1, s, 1)
+            s += 1
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.refresh()
+
+    def refresh(self):
+        for i in reversed(range(self.grid.count())):
+            self.grid.itemAt(i).widget().deleteLater()
         cur.execute('SELECT * FROM positions')
         res = cur.fetchall()
         s = 0

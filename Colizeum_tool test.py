@@ -6,6 +6,7 @@ import configparser
 import os
 import time
 import hashlib
+import psycopg2
 
 from PyQt6.QtCore import QTimer
 from PyQt6 import QtCore, QtWidgets
