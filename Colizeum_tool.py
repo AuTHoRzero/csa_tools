@@ -388,8 +388,7 @@ class Admin_bar(QMainWindow, Ui_Bar):
         self.send.setStyleSheet('color: white;\nbackground: gray;')
         QTimer.singleShot(1500, self.end_send)
         admin_name = self.comboBox.currentText()
-        i = 0
-        while i < self.grid.rowCount():
+        for i in range(self.grid.rowCount()):
             name = self.grid.itemAtPosition(i, 0)
             name = name.widget().text()
             count = self.grid.itemAtPosition(i, 1)
@@ -404,7 +403,6 @@ class Admin_bar(QMainWindow, Ui_Bar):
                     f'INSERT INTO admin_bar VALUES("{today}", "{admin_name}", "{name}", "{count}", "{res[0][1]}")')
                 conn.commit()
             self.grid.itemAtPosition(i, 1).widget().clear()
-            i = i + 1
 
     def end_send(self):
         self.sended_label.setVisible(False)
@@ -504,7 +502,6 @@ class Invent(QMainWindow, Inventory):
     def get_result(self):
         admin_name = self.current_admin.text()
 
-        i = 0
         today = datetime.datetime.now()
         date = f'{today.year}-{today.month}-{today.day}'
         self.to_insrt = f'{today.year}-{today.month}-{today.day}\n\n{admin_name}\n\n'
@@ -513,7 +510,7 @@ class Invent(QMainWindow, Inventory):
         cur.execute('SELECT * FROM admin_bar')
         result = cur.fetchall()
 
-        while i < self.grid.rowCount():
+        for i in range(self.grid.rowCount()):
             name = self.grid.itemAtPosition(i, 0)
             name = name.widget().text()
             in_program = self.grid.itemAtPosition(i, 1)
@@ -531,7 +528,6 @@ class Invent(QMainWindow, Inventory):
                 itog = (at_club.value() + at_stock) - in_program_value
             else:
                 itog = (at_club.value() + at_stock) - in_program_value
-            i = i + 1
 
             self.to_insrt += f'{name}:   {itog}\n'
             to_bd += f'{name}:   {itog}\n'
