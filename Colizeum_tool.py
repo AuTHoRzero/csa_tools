@@ -160,6 +160,17 @@ def config_active_user(path, user):
         config.write(config_file)
 
 
+def close_animation(window):
+    window.setDisabled(True)
+    opacity = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45,
+               0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1]
+    for i in reversed(opacity):
+        window.setWindowOpacity(i)
+        app.processEvents()
+        time.sleep(0.025)
+    window.close()
+
+
 class Authorize(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -175,12 +186,13 @@ class Authorize(QMainWindow):
         for i in opacity:
             self.setWindowOpacity(i)
             app.processEvents()
-            time.sleep(0.02)
+            time.sleep(0.015)
         self.setDisabled(False)
         self.ui.login_field.setFocus()
 
     def exit(self):
-        self.close()
+        close_animation(self)
+#        self.close()
 
     def authorize(self):
         login = self.ui.login_field.text()
@@ -321,7 +333,7 @@ class Main_Menu(QMainWindow, Ui_Main_Menu):
         self.close()
 
     def exit_from(self):
-        self.close()
+        close_animation(self)
 
 
 class Admin_bar(QMainWindow, Ui_Bar):
@@ -1441,65 +1453,96 @@ class Abonements(QMainWindow, Ui_Abonements):
 
     def check_and_update_data(self):
         text = self.comboBox.currentText()
-        self.sold_three_btn.setEnabled(True)
-        cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
-        user = cur_promo.fetchone()
-        if user == None:
-            cur_promo.execute(
-                f'INSERT INTO users VALUES("{text}", "0", "0", "0", "0", "0", "0", "0", "0")')
-            promo_db.commit()
-            self.check_and_update_data()
+        if len(text) < 12:
+            pass
         else:
-            if user[3] == 1:
-                self.three_value_label.setText('Активен')
-                self.three_value_label.setStyleSheet('color: green')
-            else:
-                self.three_value_label.setText('Неактивен')
-                self.three_value_label.setStyleSheet('color: red')
-                self.sold_three_btn.setStyleSheet(style)
-            if user[6] == 1:
-                self.five_status_value_label.setText('Активен')
-                self.five_status_value_label.setStyleSheet('color:green')
-            else:
-                self.five_status_value_label.setText('Неактивен')
-                self.five_status_value_label.setStyleSheet('color:red')
-                self.five_sold_btn.setStyleSheet(style)
-            if user[4] == '0':
-                pass
-            else:
-                date_ab_1 = datetime.datetime.strptime(user[4], '%d.%m.%Y')
-#                print(date_ab_1)
-#                print(self.sold_three_btn.text())
-            today = datetime.datetime.now().strftime('%d.%m.%Y')
+            self.sold_three_btn.setEnabled(True)
             cur_promo.execute(f'SELECT * FROM users WHERE number = "{text}"')
-            user_info = cur_promo.fetchone()
-            ab_1_date = datetime.datetime.strptime(user_info[4], '%d.%m.%Y')
-            ab_2_date = datetime.datetime.strptime(user_info[7], '%d.%m.%Y')
-            self.three_past_value_label.setText(f'{user[5]}')
-#            if ab_1_date == today:
-#                self.three_past_value_label.setText(f'{user[5]}')
-#            else:
-#                value_to_minus = datetime.datetime.strptime(today, '%d.%m.%Y') - ab_1_date
-#                if value_to_minus.days >= 7:
-#                    cur_promo.execute(f'UPDATE users SET ab_1_value = 0 WHERE number = "{user}"')
-#                    cur_promo.execute(f'UPDATE users SET ab_1 = 0 WHERE number = "{user}"')
-#                    promo_db.commit()
-#                    self.check_and_update_data()
-#                elif 7 - user[5] == value_to_minus.days:
-#                    pass
+            user = cur_promo.fetchone()
+            if user == None:
+                cur_promo.execute(
+                    f'INSERT INTO users VALUES("{text}", "0", "0", "0", "0", "0", "0", "0", "0")')
+                promo_db.commit()
+                self.check_and_update_data()
+            else:
+                if user[3] == 1:
+                    self.three_value_label.setText('Активен')
+                    self.three_value_label.setStyleSheet('color: green')
+                else:
+                    self.three_value_label.setText('Неактивен')
+                    self.three_value_label.setStyleSheet('color: red')
+                    self.sold_three_btn.setStyleSheet(style)
+                if user[6] == 1:
+                    self.five_status_value_label.setText('Активен')
+                    self.five_status_value_label.setStyleSheet('color:green')
+                else:
+                    self.five_status_value_label.setText('Неактивен')
+                    self.five_status_value_label.setStyleSheet('color:red')
+                    self.five_sold_btn.setStyleSheet(style)
+                if user[4] == '0':
+                    pass
+                else:
+                    date_ab_1 = datetime.datetime.strptime(user[4], '%d.%m.%Y')
+#                    print(date_ab_1)
+#                    print(self.sold_three_btn.text())
+                self.three_past_value_label.setText(f'{user[5]}')
+                today = datetime.datetime.now().strftime('%d.%m.%Y')
+                today = datetime.datetime.strptime(today, '%d.%m.%Y')
+                cur_promo.execute(
+                    f'SELECT * FROM users WHERE number = "{text}"')
+                user_info = cur_promo.fetchone()
+                if user_info[4] != '0':
+                    ab_1_date = datetime.datetime.strptime(
+                        user_info[4], '%d.%m.%Y')
+                    razn = (today - ab_1_date).days
+                    value_to_insrt = user_info[5] + int(razn)
+                    if value_to_insrt < 0:
+                        cur_promo.execute(
+                            f'UPDATE users SET ab_1_value = 0 WHERE number = "{text}"')
 
-            if ab_2_date == today:
-                self.five_past_value_label.setText(f'{user[8]}')
-            if self.five_status_value_label.text() == 'Активен':
-                self.five_sold_btn.setDisabled(True)
-                self.five_sold_btn.setStyleSheet(
-                    'color: white;\nbackground-color: gray')
+                        cur_promo.execute(
+                            f'UPDATE users SET ab_1 = 0 WHERE number = "{text}"')
 
-            if self.three_value_label.text() == 'Активен':
-                self.sold_three_btn.setDisabled(True)
-                self.sold_three_btn.setStyleSheet(
-                    'background-color: gray;\ncolor: white')
-            self.show_all()
+                        cur_promo.execute(
+                            f'UPDATE users SET ab_1_date = "0" WHERE number = {text}')
+                        promo_db.commit()
+                        self.check_and_update_data()
+                    if ab_1_date == today:
+                        pass
+                    else:
+                        pass
+                if user_info[7] != '0':
+                    ab_2_date = datetime.datetime.strptime(
+                        user_info[7], '%d.%m.%Y')
+                    razn = (today - ab_2_date).days
+                    value_to_insrt = user_info[8] + int(razn)
+                    if value_to_insrt < 0:
+                        cur_promo.execute(
+                            f'UPDATE users SET ab_2_value = 0 WHERE number = "{text}"')
+
+                        cur_promo.execute(
+                            f'UPDATE users SET ab_2 = 0 WHERE number = "{text}"')
+
+                        cur_promo.execute(
+                            f'UPDATE users SET ab_2_date = "0" WHERE number = {text}')
+                        promo_db.commit()
+                        self.check_and_update_data()
+
+                try:
+                    if ab_2_date == today:
+                        self.five_past_value_label.setText(f'{user[8]}')
+                except:
+                    pass
+                if self.five_status_value_label.text() == 'Активен':
+                    self.five_sold_btn.setDisabled(True)
+                    self.five_sold_btn.setStyleSheet(
+                        'color: white;\nbackground-color: gray')
+
+                if self.three_value_label.text() == 'Активен':
+                    self.sold_three_btn.setDisabled(True)
+                    self.sold_three_btn.setStyleSheet(
+                        'background-color: gray;\ncolor: white')
+                self.show_all()
 
     def sold(self, pack):
         user = self.comboBox.currentText()
@@ -1534,6 +1577,9 @@ class Abonements(QMainWindow, Ui_Abonements):
                     f'UPDATE users SET ab_1_value = 0 WHERE number = "{user}"')
                 cur_promo.execute(
                     f'UPDATE users SET ab_1 = 0 WHERE number = "{user}"')
+
+                cur_promo.execute(
+                    f'UPDATE users SET ab_1_date = "0" WHERE number = {user}')
                 promo_db.commit()
                 self.check_and_update_data()
             else:
@@ -1550,6 +1596,8 @@ class Abonements(QMainWindow, Ui_Abonements):
                     f'UPDATE users SET ab_2_value = 0 WHERE number = "{user}"')
                 cur_promo.execute(
                     f'UPDATE users SET ab_2 = 0 WHERE number = "{user}"')
+                cur_promo.execute(
+                    f'UPDATE users SET ab_2_date = "0" WHERE number = {user}')
                 promo_db.commit()
                 self.check_and_update_data()
             else:
